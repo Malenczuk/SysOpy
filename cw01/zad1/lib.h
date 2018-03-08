@@ -1,5 +1,5 @@
-#ifndef INC_1_LIB_H
-#define INC_1_LIB_H
+#ifndef zad1_LIB_H
+#define zad1_LIB_H
 
 #include <stdio.h>
 #include <string.h>
@@ -23,4 +23,4 @@ void deleteBlockAtIndex(Array* blockArray, int index);
 int blockToInt(char* block);
 char *findBlock(Array* blockArray, int searchValue);
 
-#endif //INC_1_LIB_H
+#endif //zad1_LIB_H
