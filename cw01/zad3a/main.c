@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
         return (0);
     }
 
-    FILE *f = fopen("raport2.txt", "a");
+    FILE *f = fopen("raport3a.txt", "a");
     if (f == NULL) {
         printf("Error opening file!\n");
         exit(1);

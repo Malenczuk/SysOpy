@@ -1,6 +1,7 @@
 CC = gcc -Wall
 LIB_NAME = lib
 MAIN_SRC = main
+optim = s
 
 compile: static shared dynamic
 
@@ -12,7 +13,7 @@ static:
 	ar rcs lib$(LIB_NAME).a $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -static $(MAIN_SRC).c -L. -l $(LIB_NAME) -o $(MAIN_SRC)_static
+	$(CC) -static $(MAIN_SRC).c -L. -l $(LIB_NAME) -o $(MAIN_SRC)_static -O$(optim)
 
 shared:
 	# zbuduj biblioteke wspoldzielona .so
@@ -20,7 +21,7 @@ shared:
 	$(CC) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -Wl,-rpath=. -L. -o $(MAIN_SRC)_shared $(MAIN_SRC).c -l$(LIB_NAME)
+	$(CC) -Wl,-rpath=. -L. -o $(MAIN_SRC)_shared $(MAIN_SRC).c -l$(LIB_NAME) -O$(optim)
 
 dynamic:
 	# zbuduj biblioteke wspoldzielona .so
@@ -28,7 +29,7 @@ dynamic:
 	$(CC) -Wl,-rpath=. -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -L. -o $(MAIN_SRC)_dynamic $(MAIN_SRC).c -ldl -D DLL
+	$(CC) -L. -o $(MAIN_SRC)_dynamic $(MAIN_SRC).c -ldl -D DLL -O$(optim)
 
 clean:
 	rm -f *~
