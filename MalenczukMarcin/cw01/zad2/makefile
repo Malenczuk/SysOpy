@@ -2,6 +2,7 @@ CC = gcc
 FLAGS = -std=c99 -Wall
 LIB_NAME = lib
 MAIN_SRC = main
+FILE ?= /dev/null
 
 compile: static shared
 
@@ -38,14 +39,14 @@ clean_all: clean
 	rm -f $(MAIN_SRC)_static
 
 test: compile
-	echo 'static library' >> raport2.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 static find 100 delete_then_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
-	echo 'shared library' >> raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 static find 100 delete_then_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
+	echo 'static library' >> $(FILE)
+	./$(MAIN_SRC)_static 500000 512 dynamic find 100 delete_then_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_static 500000 512 static find 100 delete_then_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_static 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_static 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a $(FILE)
+	echo 'shared library' >> $(FILE)
+	./$(MAIN_SRC)_shared 500000 512 dynamic find 100 delete_then_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_shared 500000 512 static find 100 delete_then_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_shared 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a $(FILE)
+	./$(MAIN_SRC)_shared 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a $(FILE)
 	make clean_all
