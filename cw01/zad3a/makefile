@@ -13,7 +13,9 @@ static:
 	ar rcs lib$(LIB_NAME).a $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) $(FLAGS) $(MAIN_SRC).c -L. -l $(LIB_NAME) -o $(MAIN_SRC)_static
+	$(CC) $(FLAGS) $(MAIN_SRC).c -I. lib$(LIB_NAME).a -o $(MAIN_SRC)_static
+
+	make clean
 
 shared:
 	# zbuduj biblioteke wspoldzielona .so
@@ -21,16 +23,20 @@ shared:
 	$(CC) $(FLAGS) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -Wl,-rpath=. -L. -o $(MAIN_SRC)_shared $(MAIN_SRC).c -l$(LIB_NAME)
+	$(CC) $(FLAGS) -Wl,-rpath=. -L. lib$(LIB_NAME).so -o $(MAIN_SRC)_shared $(MAIN_SRC).c 
+
+	make clean
 
 dynamic:
 	# zbuduj biblioteke wspoldzielona .so
 	$(CC) $(FLAGS) -fPIC -c $(LIB_NAME).c -o $(LIB_NAME).o
-	$(CC) $(FLAGS) -Wl,-rpath=. -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
+	$(CC) $(FLAGS) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -L. -o $(MAIN_SRC)_dynamic $(MAIN_SRC).c -ldl -D DLL
+	$(CC) $(FLAGS) -Wl,-rpath=. -L. -o $(MAIN_SRC)_dynamic $(MAIN_SRC).c -ldl -D DLL
 
+	make clean
+	
 clean:
 	rm -f *~
 	rm -f *.o

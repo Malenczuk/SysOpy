@@ -3,7 +3,7 @@ FLAGS = -std=c99 -Wall
 LIB_NAME = lib
 MAIN_SRC = main
 
-compile: static shared dynamic
+compile: static shared
 
 static:
 	# kompilacja zrodla
@@ -13,7 +13,9 @@ static:
 	ar rcs lib$(LIB_NAME).a $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) $(FLAGS) $(MAIN_SRC).c -L. -l $(LIB_NAME) -o $(MAIN_SRC)_static
+	$(CC) $(FLAGS) $(MAIN_SRC).c -I. lib$(LIB_NAME).a -o $(MAIN_SRC)_static
+
+	make clean
 
 shared:
 	# zbuduj biblioteke wspoldzielona .so
@@ -21,8 +23,9 @@ shared:
 	$(CC) $(FLAGS) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) -Wl,-rpath=. -L. -o $(MAIN_SRC)_shared $(MAIN_SRC).c -l$(LIB_NAME)
+	$(CC) $(FLAGS) -Wl,-rpath=. -L. lib$(LIB_NAME).so -o $(MAIN_SRC)_shared $(MAIN_SRC).c 
 
+	make clean
 
 clean:
 	rm -f *~
@@ -35,14 +38,14 @@ clean_all: clean
 	rm -f $(MAIN_SRC)_static
 
 test: compile
-	echo 'static library' >> raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
-	echo 'shared library' >> raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
-	clean_all
+	echo 'static library' >> raport2.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic da 100000 cda 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 static da 100000 cda 100000 | tee -a raport2.txt
+	echo 'shared library' >> raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic da 100000 cda 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 static da 100000 cda 100000 | tee -a raport2.txt
+	make clean_all
