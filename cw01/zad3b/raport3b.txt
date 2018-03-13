@@ -1,200 +1,432 @@
-ArraySize: 500000   BlockSize: 512   Allocation: dynamic
-Creating array:
-Real:   3.31 s   User:   3.19 s   System: 0.10 s
-Finding block: 
-Real:   2.70 s   User:   2.69 s   System: 0.00 s
-Deleting then Adding 100000 Blocks: 
-Real:   0.62 s   User:   0.62 s   System: 0.00 s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+static library -O0
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   3.29 s   User:   3.18 s   System: 0.09 s
+Real:   2.97 s   User:   2.84 s   System: 0.10 s
 Finding block: 
-Real:   2.70 s   User:   2.69 s   System: 0.00 s
+Real:   2.41 s   User:   2.41 s   System: 0.00 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.62 s   User:   0.63 s   System: 0.00 s
+Real:   0.52 s   User:   0.51 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   3.18 s   User:   3.10 s   System: 0.07 s
+Real:   2.72 s   User:   2.60 s   System: 0.09 s
 Finding block: 
-Real:   2.71 s   User:   2.70 s   System: 0.00 s
+Real:   2.52 s   User:   2.49 s   System: 0.01 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.64 s   User:   0.62 s   System: 0.01 s
+Real:   0.52 s   User:   0.50 s   System: 0.02 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   2.96 s   User:   2.86 s   System: 0.08 s
-Finding block: 
-Real:   2.70 s   User:   2.70 s   System: 0.00 s
+Real:   2.54 s   User:   2.45 s   System: 0.08 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.57 s   User:   0.57 s   System: 0.00 s
+Real:   0.49 s   User:   0.49 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.52 s   User:   0.51 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   2.92 s   User:   2.82 s   System: 0.08 s
-Finding block: 
-Real:   2.74 s   User:   2.74 s   System: 0.00 s
+Real:   2.46 s   User:   2.39 s   System: 0.05 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.58 s   User:   0.56 s   System: 0.02 s
+Real:   0.50 s   User:   0.48 s   System: 0.02 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.47 s   System: 0.01 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+shared library -O0
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   2.93 s   User:   2.85 s   System: 0.07 s
+Real:   2.33 s   User:   2.24 s   System: 0.08 s
 Finding block: 
-Real:   2.70 s   User:   2.70 s   System: 0.00 s
+Real:   2.19 s   User:   2.19 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.46 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.37 s   User:   2.28 s   System: 0.07 s
+Finding block: 
+Real:   2.37 s   User:   2.36 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.49 s   User:   0.48 s   System: 0.02 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.44 s   User:   2.36 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.44 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.46 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.36 s   User:   2.28 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.49 s   User:   0.47 s   System: 0.02 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.46 s   System: 0.01 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+dynamic library -O0
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.34 s   User:   2.26 s   System: 0.06 s
+Finding block: 
+Real:   2.17 s   User:   2.17 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.45 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.35 s   User:   2.28 s   System: 0.06 s
+Finding block: 
+Real:   2.19 s   User:   2.18 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.45 s   System: 0.02 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.42 s   User:   2.35 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.47 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.48 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.48 s   User:   2.38 s   System: 0.08 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.51 s   User:   0.50 s   System: 0.02 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.45 s   System: 0.01 s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+static library -O1
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.84 s   User:   2.74 s   System: 0.08 s
+Finding block: 
+Real:   2.24 s   User:   2.23 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.53 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.80 s   User:   2.72 s   System: 0.06 s
+Finding block: 
+Real:   2.17 s   User:   2.17 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.54 s   User:   0.53 s   System: 0.01 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.76 s   User:   2.70 s   System: 0.05 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.57 s   User:   0.56 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.54 s   User:   0.54 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.75 s   User:   2.66 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.55 s   User:   0.53 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.52 s   System: 0.02 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+shared library -O1
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.35 s   User:   2.26 s   System: 0.07 s
+Finding block: 
+Real:   2.17 s   User:   2.17 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.45 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.35 s   User:   2.27 s   System: 0.07 s
+Finding block: 
+Real:   2.15 s   User:   2.15 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.45 s   System: 0.01 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.34 s   User:   2.27 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.46 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.49 s   User:   0.48 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.49 s   User:   2.41 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.46 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.45 s   System: 0.02 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+dynamic library -O1
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.38 s   User:   2.30 s   System: 0.07 s
+Finding block: 
+Real:   2.16 s   User:   2.16 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.49 s   User:   0.49 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.43 s   User:   2.36 s   System: 0.06 s
+Finding block: 
+Real:   2.16 s   User:   2.16 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.49 s   User:   0.47 s   System: 0.01 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.34 s   User:   2.27 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.45 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.44 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.33 s   User:   2.25 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.47 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.46 s   System: 0.02 s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+static library -O2
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.69 s   User:   2.61 s   System: 0.06 s
+Finding block: 
+Real:   2.16 s   User:   2.16 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.51 s   User:   0.51 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.68 s   User:   2.61 s   System: 0.06 s
+Finding block: 
+Real:   2.20 s   User:   2.20 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.50 s   System: 0.01 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.76 s   User:   2.66 s   System: 0.09 s
 Deleting then Adding 100000 Blocks: 
 Real:   0.56 s   User:   0.56 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.53 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   3.02 s   User:   2.90 s   System: 0.09 s
-Finding block: 
-Real:   2.70 s   User:   2.70 s   System: 0.00 s
+Real:   2.79 s   User:   2.69 s   System: 0.08 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.59 s   User:   0.58 s   System: 0.02 s
+Real:   0.55 s   User:   0.54 s   System: 0.02 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.52 s   User:   0.50 s   System: 0.02 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
-Creating array:
-Real:   0.65 s   User:   0.62 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.07 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.07 s   User:   0.06 s   System: 0.00 s
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
 
-ArraySize: 100000   BlockSize: 512   Allocation: static
-Creating array:
-Real:   0.64 s   User:   0.61 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.07 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
-Creating array:
-Real:   0.59 s   User:   0.56 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.05 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.05 s   System: 0.00 s
-
-ArraySize: 100000   BlockSize: 512   Allocation: static
-Creating array:
-Real:   0.60 s   User:   0.57 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.05 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
-Creating array:
-Real:   0.58 s   User:   0.56 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.05 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-
-ArraySize: 100000   BlockSize: 512   Allocation: static
-Creating array:
-Real:   0.60 s   User:   0.57 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
+shared library -O2
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   3.23 s   User:   3.13 s   System: 0.08 s
+Real:   2.42 s   User:   2.33 s   System: 0.07 s
 Finding block: 
-Real:   2.70 s   User:   2.71 s   System: 0.00 s
+Real:   2.24 s   User:   2.24 s   System: 0.00 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.62 s   User:   0.61 s   System: 0.00 s
+Real:   0.46 s   User:   0.45 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   3.18 s   User:   3.07 s   System: 0.09 s
+Real:   2.45 s   User:   2.38 s   System: 0.06 s
 Finding block: 
-Real:   2.69 s   User:   2.68 s   System: 0.00 s
+Real:   2.22 s   User:   2.21 s   System: 0.00 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.63 s   User:   0.62 s   System: 0.02 s
+Real:   0.47 s   User:   0.45 s   System: 0.02 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   2.91 s   User:   2.82 s   System: 0.07 s
-Finding block: 
-Real:   2.69 s   User:   2.69 s   System: 0.00 s
+Real:   2.42 s   User:   2.32 s   System: 0.09 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.57 s   User:   0.57 s   System: 0.00 s
+Real:   0.48 s   User:   0.48 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.50 s   User:   0.49 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   2.92 s   User:   2.83 s   System: 0.08 s
-Finding block: 
-Real:   2.70 s   User:   2.69 s   System: 0.00 s
+Real:   2.47 s   User:   2.38 s   System: 0.08 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.58 s   User:   0.56 s   System: 0.02 s
+Real:   0.50 s   User:   0.49 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.46 s   System: 0.02 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+dynamic library -O2
 
 ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   2.95 s   User:   2.86 s   System: 0.07 s
+Real:   2.51 s   User:   2.43 s   System: 0.07 s
 Finding block: 
-Real:   2.73 s   User:   2.72 s   System: 0.00 s
+Real:   2.28 s   User:   2.27 s   System: 0.00 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.56 s   User:   0.57 s   System: 0.00 s
+Real:   0.47 s   User:   0.47 s   System: 0.00 s
 
 ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   2.97 s   User:   2.86 s   System: 0.09 s
+Real:   2.82 s   User:   2.70 s   System: 0.11 s
 Finding block: 
-Real:   2.70 s   User:   2.70 s   System: 0.00 s
+Real:   2.46 s   User:   2.45 s   System: 0.00 s
 Deleting then Adding 100000 Blocks: 
-Real:   0.58 s   User:   0.56 s   System: 0.01 s
+Real:   0.50 s   User:   0.48 s   System: 0.01 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   0.65 s   User:   0.64 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.07 s   User:   0.06 s   System: 0.00 s
+Real:   2.68 s   User:   2.58 s   System: 0.08 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.44 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.45 s   System: 0.00 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: static
+ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   0.64 s   User:   0.62 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.07 s   User:   0.06 s   System: 0.00 s
+Real:   2.37 s   User:   2.28 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.46 s   System: 0.02 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.45 s   System: 0.01 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+static library -O3
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   0.59 s   User:   0.56 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.05 s   User:   0.05 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
+Real:   2.77 s   User:   2.67 s   System: 0.08 s
+Finding block: 
+Real:   2.34 s   User:   2.33 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.56 s   User:   0.55 s   System: 0.00 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: static
+ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   0.59 s   User:   0.56 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
+Real:   2.82 s   User:   2.73 s   System: 0.08 s
+Finding block: 
+Real:   2.18 s   User:   2.18 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.51 s   System: 0.01 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: dynamic
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
 Creating array:
-Real:   0.60 s   User:   0.58 s   System: 0.01 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.05 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.05 s   User:   0.06 s   System: 0.00 s
+Real:   2.72 s   User:   2.62 s   System: 0.08 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.54 s   User:   0.54 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.53 s   System: 0.00 s
 
-ArraySize: 100000   BlockSize: 512   Allocation: static
+ArraySize: 500000   BlockSize: 512   Allocation: static
 Creating array:
-Real:   0.60 s   User:   0.57 s   System: 0.02 s
-Deleting then Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.06 s   System: 0.00 s
-Cross Deleting and Adding 10000 Blocks: 
-Real:   0.06 s   User:   0.05 s   System: 0.00 s
+Real:   2.67 s   User:   2.57 s   System: 0.08 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.53 s   User:   0.52 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.54 s   User:   0.53 s   System: 0.01 s
 
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+shared library -O3
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.35 s   User:   2.27 s   System: 0.07 s
+Finding block: 
+Real:   2.15 s   User:   2.14 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.46 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.39 s   User:   2.31 s   System: 0.06 s
+Finding block: 
+Real:   2.15 s   User:   2.16 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.48 s   User:   0.46 s   System: 0.02 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.35 s   User:   2.26 s   System: 0.08 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.47 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.44 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.40 s   User:   2.31 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.47 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.44 s   System: 0.01 s
+
+┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+
+dynamic library -O3
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.39 s   User:   2.32 s   System: 0.06 s
+Finding block: 
+Real:   2.18 s   User:   2.18 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.46 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.40 s   User:   2.32 s   System: 0.06 s
+Finding block: 
+Real:   2.21 s   User:   2.21 s   System: 0.00 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.46 s   User:   0.45 s   System: 0.02 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: dynamic
+Creating array:
+Real:   2.34 s   User:   2.27 s   System: 0.06 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.45 s   User:   0.44 s   System: 0.00 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.47 s   System: 0.00 s
+
+ArraySize: 500000   BlockSize: 512   Allocation: static
+Creating array:
+Real:   2.33 s   User:   2.25 s   System: 0.07 s
+Deleting then Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.46 s   System: 0.01 s
+Cross Deleting and Adding 100000 Blocks: 
+Real:   0.47 s   User:   0.46 s   System: 0.01 s
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

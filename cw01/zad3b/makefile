@@ -13,7 +13,7 @@ static:
 	ar rcs lib$(LIB_NAME).a $(LIB_NAME).o
 
 	# linkowanie
-	$(CC) $(FLAGS) $(MAIN_SRC).c -I.  lib$(LIB_NAME).a -o $(MAIN_SRC)_static -O$(optim)
+	$(CC) $(FLAGS) $(MAIN_SRC).c -I. lib$(LIB_NAME).a -o $(MAIN_SRC)_static -O$(optim)
 
 	make clean
 
@@ -49,19 +49,25 @@ clean_all: clean
 	rm -f $(MAIN_SRC)_static
 
 test: compile
-	echo 'static library' >> raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
-	echo 'shared library' >> raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
-	echo 'dynamic library' >> raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
+	echo 'static library -O$(optim)' >> raport3b.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_static 500000 512 static find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_static 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
+	echo 'shared library -O$(optim)' >> raport3b.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_shared 500000 512 static find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_shared 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
+	echo 'dynamic library -O$(optim)' >> raport3b.txt
+	./$(MAIN_SRC)_dynamic 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_dynamic 500000 512 static find 100 delete_then_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_dynamic 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
+	./$(MAIN_SRC)_dynamic 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3b.txt
 	make clean_all
+
+optim_test:
+	make test optim=0
+	make test optim=1
+	make test optim=2
+	make test optim=3

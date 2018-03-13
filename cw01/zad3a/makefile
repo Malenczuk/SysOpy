@@ -27,7 +27,7 @@ shared:
 
 	make clean
 
-dynamic:
+dynamic
 	# zbuduj biblioteke wspoldzielona .so
 	$(CC) $(FLAGS) -fPIC -c $(LIB_NAME).c -o $(LIB_NAME).o
 	$(CC) $(FLAGS) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
@@ -50,18 +50,18 @@ clean_all: clean
 
 test: compile
 	echo 'static library' >> raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_static 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_static 500000 512 static find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_static 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
 	echo 'shared library' >> raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_shared 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_shared 500000 512 static find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_shared 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
 	echo 'dynamic library' >> raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 dynamic f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 static f 100 da 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 dynamic da 100000 cda 100000 | tee -a raport3a.txt
-	./$(MAIN_SRC)_dynamic 500000 512 static da 100000 cda 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_dynamic 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_dynamic 500000 512 static find 100 delete_then_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_dynamic 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
+	./$(MAIN_SRC)_dynamic 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport3a.txt
 	make clean_all

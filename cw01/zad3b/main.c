@@ -79,13 +79,13 @@ void find(Array *array, int arg){
 }
 
 int execute(Array *array, char *command, int arg){
-    if(strcmp(command, "f") == 0){
+    if(strcmp(command, "find") == 0){
         find(array, arg);
     }
-    else if(strcmp(command, "da") == 0){
+    else if(strcmp(command, "delete_then_add") == 0){
         deleteAndAdd(array, 0, arg);
     }
-    else if(strcmp(command, "cda") == 0){
+    else if(strcmp(command, "delete_and_add") == 0){
         crossDeleteAndAdd(array, 0, arg);
     }
     else {

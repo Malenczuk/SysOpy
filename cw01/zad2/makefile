@@ -31,21 +31,21 @@ clean:
 	rm -f *~
 	rm -f *.o
 	rm -f *.a
-	rm -f *.so
 
 clean_all: clean
+	rm -f *.so
 	rm -f $(MAIN_SRC)_shared
 	rm -f $(MAIN_SRC)_static
 
 test: compile
 	echo 'static library' >> raport2.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 dynamic da 100000 cda 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_static 500000 512 static da 100000 cda 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 static find 100 delete_then_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_static 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
 	echo 'shared library' >> raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 dynamic da 100000 cda 100000 | tee -a raport2.txt
-	./$(MAIN_SRC)_shared 500000 512 static da 100000 cda 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic find 100 delete_then_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 static find 100 delete_then_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 dynamic delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
+	./$(MAIN_SRC)_shared 500000 512 static delete_then_add 100000 delete_and_add 100000 | tee -a raport2.txt
 	make clean_all
