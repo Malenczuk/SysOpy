@@ -104,6 +104,18 @@ void fillArray(Array *array){
     }
 }
 
+int checkArg(int arraySize, int blockSize){
+    if(arraySize <= 0) {
+        printf("Array Size must be positive");
+        return 1;
+    }
+    if(blockSize <= 0) {
+        printf("Block Size must be positive");
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
 
     #ifdef DLL
@@ -119,7 +131,7 @@ int main(int argc, char *argv[]) {
 
     if(argc < 4) {
         printf("Specify ArraySize, BlockSize and Memory allocation type(\"static\" or \"dynamic\")\n");
-        return (0);
+        exit(1);
     }
 
     arraySize = (int) strtol(argv[1], '\0', 10);
@@ -130,8 +142,10 @@ int main(int argc, char *argv[]) {
         isStatic = false;
     else {
         printf("Use \"static\" or \"dynamic\" memory allocation");
-        return (0);
+        exit(1);
     }
+    if(checkArg(arraySize, blockSize))
+        exit(1);
 
     clock_t rTime[6] = {0, 0, 0, 0, 0, 0};
     struct tms* tmsTime[6];
@@ -146,6 +160,10 @@ int main(int argc, char *argv[]) {
     currentTime++;
 
     Array *array = createArray(arraySize, blockSize, isStatic);
+    if(!array){
+        printf("Error creating Array");
+        exit(1);
+    }
     fillArray(array);
 
     rTime[currentTime] = times(tmsTime[currentTime]);
