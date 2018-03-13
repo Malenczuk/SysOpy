@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-#include <sys/times.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
