@@ -1,7 +1,6 @@
 CC = gcc -Wall
 LIB_NAME = lib
 MAIN_SRC = main
-optim = s
 
 compile: static shared dynamic
 
@@ -43,16 +42,16 @@ clean_all: clean
 	rm -f $(MAIN_SRC)_static
 
 test: compile
-	./$(MAIN_SRC)_static 500000 500 dynamic f 100 da 100000
-	./$(MAIN_SRC)_static 500000 500 static f 100 da 100000
-	./$(MAIN_SRC)_shared 500000 500 dynamic f 100 da 100000
-	./$(MAIN_SRC)_shared 500000 500 static f 100 da 100000
-	./$(MAIN_SRC)_dynamic 500000 500 dynamic f 100 da 100000
-	./$(MAIN_SRC)_dynamic 500000 500 static f 100 da 100000
-	./$(MAIN_SRC)_static 100000 500 dynamic da 10000 cda 10000
-	./$(MAIN_SRC)_static 100000 500 static da 10000 cda 10000
-	./$(MAIN_SRC)_shared 100000 500 dynamic da 10000 cda 10000
-	./$(MAIN_SRC)_shared 100000 500 static da 10000 cda 10000
-	./$(MAIN_SRC)_dynamic 100000 500 dynamic da 10000 cda 10000
-	./$(MAIN_SRC)_dynamic 100000 500 static da 10000 cda 10000
+	./$(MAIN_SRC)_static 500000 512 dynamic f 100 da 100000
+	./$(MAIN_SRC)_static 500000 512 static f 100 da 100000
+	./$(MAIN_SRC)_shared 500000 512 dynamic f 100 da 100000
+	./$(MAIN_SRC)_shared 500000 512 static f 100 da 100000
+	./$(MAIN_SRC)_dynamic 500000 512 dynamic f 100 da 100000
+	./$(MAIN_SRC)_dynamic 500000 512 static f 100 da 100000
+	./$(MAIN_SRC)_static 100000 512 dynamic da 10000 cda 10000
+	./$(MAIN_SRC)_static 100000 512 static da 10000 cda 10000
+	./$(MAIN_SRC)_shared 100000 512 dynamic da 10000 cda 10000
+	./$(MAIN_SRC)_shared 100000 512 static da 10000 cda 10000
+	./$(MAIN_SRC)_dynamic 100000 512 dynamic da 10000 cda 10000
+	./$(MAIN_SRC)_dynamic 100000 512 static da 10000 cda 10000
 	make clean_all

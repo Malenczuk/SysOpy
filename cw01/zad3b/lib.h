@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <zconf.h>
 #include <stdbool.h>
+#include <limits.h>
 
 typedef struct {
     char** array;

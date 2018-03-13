@@ -12,36 +12,105 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef DLL
 void * dll;
+typedef struct {
+    char** array;
+    int arraySize;
+    int blockSize;
+    bool isStatic;
+} Array;
+#endif
 
 double timeDiff(clock_t start, clock_t end){
     return (double)(end -  start) / sysconf(_SC_CLK_TCK);
 }
 
 void printTime(clock_t rStartTime, struct tms tmsStartTime, clock_t rEndTime, struct tms tmsEndTime){
-    printf("Real:   %lf   ", timeDiff(rStartTime, rEndTime));
-    printf("User:   %lf   ", timeDiff(tmsStartTime.tms_utime, tmsEndTime.tms_utime));
-    printf("System: %lf\n", timeDiff(tmsStartTime.tms_stime, tmsEndTime.tms_stime));
+    printf("Real:   %.2lf s   ", timeDiff(rStartTime, rEndTime));
+    printf("User:   %.2lf s   ", timeDiff(tmsStartTime.tms_utime, tmsEndTime.tms_utime));
+    printf("System: %.2lf s\n", timeDiff(tmsStartTime.tms_stime, tmsEndTime.tms_stime));
 }
 
-void fprintTime(FILE *f, clock_t rStartTime, struct tms tmsStartTime, clock_t rEndTime, struct tms tmsEndTime){
-    fprintf(f, "Real:   %lf   ", timeDiff(rStartTime, rEndTime));
-    fprintf(f, "User:   %lf   ", timeDiff(tmsStartTime.tms_utime, tmsEndTime.tms_utime));
-    fprintf(f, "System: %lf\n", timeDiff(tmsStartTime.tms_stime, tmsEndTime.tms_stime));
+void crossDeleteAndAdd(Array *array, int startIndex, int arg){
+    #ifdef DLL
+    void (*deleteBlockAtIndex)(Array*, int) = dlsym(dll, "deleteBlockAtIndex");
+    void (*addBlockAtIndex)(Array*, int) = dlsym(dll,"addBlockAtIndex");
+    #endif
+    if(startIndex < 0 && startIndex >= array->arraySize)
+        printf("Index out of bounds");
+    else{
+        printf("Cross Deleting and Adding %d Blocks: \n", arg);
+        for(int i = 0; (i + startIndex) < array->arraySize && i < arg; i++) {
+            deleteBlockAtIndex(array, i);
+            addBlockAtIndex(array, i);
+        }
+    }
+
+}
+
+void deleteAndAdd(Array *array, int startIndex, int arg){
+    #ifdef DLL
+    void (*deleteBlockAtIndex)(Array*, int) = dlsym(dll, "deleteBlockAtIndex");
+    void (*addBlockAtIndex)(Array*, int) = dlsym(dll,"addBlockAtIndex");
+    #endif
+    if(startIndex < 0 && startIndex >= array->arraySize)
+        printf("Index out of bounds");
+    else{
+        printf("Deleting then Adding %d Blocks: \n", arg);
+        for(int i = 0; (i + startIndex) < array->arraySize && i < arg; i++) {
+            deleteBlockAtIndex(array, i);
+        }
+        for(int i = 0; (i + startIndex) < array->arraySize && i < arg; i++) {
+            addBlockAtIndex(array, i);
+        }
+    }
+}
+
+void find(Array *array, int arg){
+    #ifdef DLL
+    char * (*findBlock)(Array*, int) = dlsym(dll, "findBlock");
+    #endif
+    if(arg < 0 && arg >= array->arraySize) {
+        printf("Index out of bounds");
+    }
+    printf("Finding block: \n");
+    findBlock(array, arg);
+}
+
+int execute(Array *array, char *command, int arg){
+    if(strcmp(command, "f") == 0){
+        find(array, arg);
+    }
+    else if(strcmp(command, "da") == 0){
+        deleteAndAdd(array, 0, arg);
+    }
+    else if(strcmp(command, "cda") == 0){
+        crossDeleteAndAdd(array, 0, arg);
+    }
+    else {
+        printf("Wrong operation\n");
+        return(1);
+    }
+    return(0);
+}
+
+void fillArray(Array *array){
+    #ifdef DLL
+    void (*addBlockAtIndex)(Array*, int) = dlsym(dll,"addBlockAtIndex");
+    #endif
+    for (int i = 0; i < array->arraySize; i++) {
+        addBlockAtIndex(array, i);
+    }
 }
 
 int main(int argc, char *argv[]) {
 
     #ifdef DLL
-
     dll = dlopen("./liblib.so", RTLD_LAZY);
-    typedef struct Array Array;
+
     Array * (*createArray)(int, int, bool) = dlsym(dll, "createArray");
     void (*deleteArray)(Array* ) = dlsym(dll, "deleteArray");
-    void (*addBlockAtIndex)(Array*, int) = dlsym(dll,"addBlockAtIndex");
-    void (*deleteBlockAtIndex)(Array*, int) = dlsym(dll, "deleteBlockAtIndex");
-    char * (*findBlock)(Array*, int) = dlsym(dll, "findBlock");
-
     #endif
 
     int arraySize, blockSize;
@@ -49,7 +118,7 @@ int main(int argc, char *argv[]) {
 //    srand( time( NULL ) );
 
     if(argc < 4) {
-        printf("Specify ArraySize, BlockSize and Memory allocation type\n");
+        printf("Specify ArraySize, BlockSize and Memory allocation type(\"static\" or \"dynamic\")\n");
         return (0);
     }
 
@@ -64,12 +133,6 @@ int main(int argc, char *argv[]) {
         return (0);
     }
 
-    FILE *f = fopen("raport3b.txt", "a");
-    if (f == NULL) {
-        printf("Error opening file!\n");
-        exit(1);
-    }
-
     clock_t rTime[6] = {0, 0, 0, 0, 0, 0};
     struct tms* tmsTime[6];
     for (int i = 0; i < 6; i++) {
@@ -78,82 +141,34 @@ int main(int argc, char *argv[]) {
     int currentTime = 0;
 
     printf("ArraySize: %d   BlockSize: %d   Allocation: %s\n", arraySize, blockSize, argv[3]);
-    fprintf(f, "ArraySize: %d   BlockSize: %d   Allocation: %s\n", arraySize, blockSize, argv[3]);
 
     rTime[currentTime] = times(tmsTime[currentTime]);
     currentTime++;
 
     Array *array = createArray(arraySize, blockSize, isStatic);
-    for (int i = 0; i < arraySize; i++) {
-        addBlockAtIndex(array, i);
-    }
+    fillArray(array);
 
     rTime[currentTime] = times(tmsTime[currentTime]);
     currentTime++;
 
     printf("Creating array:\n");
     printTime(rTime[currentTime-2], *tmsTime[currentTime-2], rTime[currentTime-1], *tmsTime[currentTime-1]);
-    fprintf(f, "Creating array:\n");
-    fprintTime(f, rTime[currentTime-2], *tmsTime[currentTime-2], rTime[currentTime-1], *tmsTime[currentTime-1]);
-
 
     for(int i = 4; i + 1 < argc && i < 8; i+=2){
-        int startIndex = 0;
         int arg = (int) strtol(argv[i+1], '\0', 10);
         rTime[currentTime] = times(tmsTime[currentTime]);
         currentTime++;
-
-        if(strcmp(argv[i], "f") == 0){
-            if(arg < 0 && arg >= arraySize) {
-                printf("Index out of bounds");
-            }
-            printf("Finding block: \n");
-            fprintf(f,"Finding block: \n");
-            findBlock(array, arg);
+        
+        if(execute(array, argv[i], arg)){
+            printf("Wrong command\n");
         }
-        else if(strcmp(argv[i], "da") == 0){
-            if(startIndex < 0 && startIndex >= arraySize)
-                printf("Index out of bounds");
-            else{
-                printf("Deleting then Adding %d Blocks: \n", arg);
-                fprintf(f, "Deleting then Adding %d Blocks: \n", arg);
-                for(int i = 0; (i + startIndex) < arraySize && i < arg; i++) {
-                    deleteBlockAtIndex(array, i);
-                }
-                for(int i = 0; (i + startIndex) < arraySize && i < arg; i++) {
-                    addBlockAtIndex(array, i);
-                }
-            }
-        }
-        else if(strcmp(argv[i], "cda") == 0){
-            if(startIndex < 0 && startIndex >= arraySize)
-                printf("Index out of bounds");
-            else{
-                printf("Cross Deleting and Adding %d Blocks: \n", arg);
-                fprintf(f, "Cross Deleting and Adding %d Blocks: \n", arg);
-                for(int i = 0; (i + startIndex) < arraySize && i < arg; i++) {
-                    deleteBlockAtIndex(array, i);
-                    addBlockAtIndex(array, i);
-                }
-            }
-        }
-        else {
-            printf("Wrong operation\n");
-            return(0);
-        }
-
+    
         rTime[currentTime] = times(tmsTime[currentTime]);
         currentTime++;
-
         printTime(rTime[currentTime-2], *tmsTime[currentTime-2], rTime[currentTime-1], *tmsTime[currentTime-1]);
-        fprintTime(f, rTime[currentTime-2], *tmsTime[currentTime-2], rTime[currentTime-1], *tmsTime[currentTime-1]);
     }
     printf("\n");
-    fprintf(f, "\n");
     deleteArray(array);
-
-    fclose(f);
-
 
 #ifdef DLL
     dlclose(dll);

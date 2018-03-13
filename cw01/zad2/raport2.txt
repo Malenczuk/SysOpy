@@ -94,3 +94,195 @@ Real:   0.050000   User:   0.060000   System: 0.000000
 Cross Deleting and Adding 10000 Blocks: 
 Real:   0.060000   User:   0.050000   System: 0.000000
 
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.880000   User:   2.770000   System: 0.090000
+Finding block: 
+Real:   2.020000   User:   2.030000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.500000   User:   0.500000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.610000   User:   2.520000   System: 0.080000
+Finding block: 
+Real:   2.040000   User:   2.030000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.510000   User:   0.510000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.280000   User:   2.220000   System: 0.050000
+Finding block: 
+Real:   2.100000   User:   2.100000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.440000   User:   0.440000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.280000   User:   2.210000   System: 0.050000
+Finding block: 
+Real:   2.120000   User:   2.120000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.450000   User:   0.430000   System: 0.020000
+
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.260000   User:   2.190000   System: 0.050000
+Finding block: 
+Real:   2.020000   User:   2.020000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.450000   User:   0.440000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.260000   User:   2.200000   System: 0.050000
+Finding block: 
+Real:   2.090000   User:   2.090000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.470000   User:   0.450000   System: 0.010000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.510000   User:   0.490000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.060000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.060000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.510000   User:   0.500000   System: 0.000000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.060000   User:   0.050000   System: 0.010000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.460000   User:   0.440000   System: 0.000000
+Deleting then Adding 10000 Blocks: 
+Real:   0.040000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.470000   User:   0.450000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.470000   User:   0.450000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.040000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.040000   User:   0.050000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.460000   User:   0.440000   System: 0.000000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.010000
+
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.690000   User:   2.620000   System: 0.060000
+Finding block: 
+Real:   2.070000   User:   2.060000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.530000   User:   0.530000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.600000   User:   2.520000   System: 0.070000
+Finding block: 
+Real:   2.040000   User:   2.030000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.540000   User:   0.530000   System: 0.010000
+
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.370000   User:   2.290000   System: 0.060000
+Finding block: 
+Real:   2.140000   User:   2.140000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.440000   User:   0.440000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.340000   User:   2.270000   System: 0.050000
+Finding block: 
+Real:   2.110000   User:   2.110000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.470000   User:   0.460000   System: 0.010000
+
+ArraySize: 500000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   2.290000   User:   2.210000   System: 0.060000
+Finding block: 
+Real:   2.120000   User:   2.110000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.440000   User:   0.440000   System: 0.000000
+
+ArraySize: 500000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   2.260000   User:   2.190000   System: 0.050000
+Finding block: 
+Real:   2.110000   User:   2.110000   System: 0.000000
+Deleting then Adding 100000 Blocks: 
+Real:   0.460000   User:   0.440000   System: 0.020000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.530000   User:   0.520000   System: 0.000000
+Deleting then Adding 10000 Blocks: 
+Real:   0.060000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.060000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.520000   User:   0.500000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.060000   User:   0.060000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.480000   User:   0.460000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.470000   User:   0.460000   System: 0.000000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.010000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: dynamic
+Creating array:
+Real:   0.470000   User:   0.450000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.040000   User:   0.040000   System: 0.000000
+
+ArraySize: 100000   BlockSize: 500   Allocation: static
+Creating array:
+Real:   0.460000   User:   0.430000   System: 0.010000
+Deleting then Adding 10000 Blocks: 
+Real:   0.050000   User:   0.050000   System: 0.000000
+Cross Deleting and Adding 10000 Blocks: 
+Real:   0.040000   User:   0.050000   System: 0.000000
+

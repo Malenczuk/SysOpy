@@ -94,7 +94,7 @@ char *findBlock(Array* blockArray, int index) {
         int minDifference = INT_MAX;
         for(int i = 0; i < blockArray->arraySize; i++){
             char* block = blockArray->array[i];
-            if(block != NULL){
+            if(block != NULL && i != index){
                 int difference = abs(blockToInt(block) - searchValue);
                 if(minDifference >= difference){
                     minDifference = difference;

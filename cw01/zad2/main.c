@@ -12,7 +12,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef DLL
 void * dll;
+typedef struct {
+    char** array;
+    int arraySize;
+    int blockSize;
+    bool isStatic;
+} Array;
+#endif
 
 double timeDiff(clock_t start, clock_t end){
     return (double)(end -  start) / sysconf(_SC_CLK_TCK);
@@ -33,9 +41,8 @@ void fprintTime(FILE *f, clock_t rStartTime, struct tms tmsStartTime, clock_t rE
 int main(int argc, char *argv[]) {
 
     #ifdef DLL
-
     dll = dlopen("./liblib.so", RTLD_LAZY);
-    typedef struct Array Array;
+
     Array * (*createArray)(int, int, bool) = dlsym(dll, "createArray");
     void (*deleteArray)(Array* ) = dlsym(dll, "deleteArray");
     void (*addBlockAtIndex)(Array*, int) = dlsym(dll,"addBlockAtIndex");
