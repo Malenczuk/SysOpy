@@ -1,5 +1,12 @@
 comment: 
-
+Przy opcji optymalizacyjnej -O0 można zauważyć że czas
+całkowity wykonwywania są trochę większe niż w pozostałych
+opcjach. Najbardziej zauważalny jest spadek czasu wyszukiwania
+bloku w tablicy gdzie czas między optymalizacją -O0 a -O1
+jest około 8 krotny a w -O2 i -O3 jest jeszcze mniejszy.
+Czasy tworzenia i wypełniania tablicy maleją o niewielką
+ilośc pomiędzy -O0 a -O1 oraz pomiędzy -O1 a -02.
+Czasy usówania i dodawania pozostają wręcz podobne. 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 static library -O0

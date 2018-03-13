@@ -1,5 +1,12 @@
 comment: 
-
+Różnice pomiarowe czasów wykonania operacji na różnych typach
+bibliotek są bardzo zbliżone do siebie. Ciężko stwierdzić
+czy to są różnice spowodowane różnicą tych bibliotek czy
+też jest to spowodowane nieidealnym środowiskiem w którym
+inne procesy mogły spowolnić wykonywanie części tego prgramu.
+Różnica jest taka że biblioteki współdzielona oraz
+współdzielona dynamicznie ładowana mają osobny plik biblioteki
+gdzie statyczna zamieszczona jest w pliku wykonywalnym.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 static library

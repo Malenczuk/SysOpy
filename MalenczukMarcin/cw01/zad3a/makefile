@@ -28,7 +28,7 @@ shared:
 
 	make clean
 
-dynamic
+dynamic:
 	# zbuduj biblioteke wspoldzielona .so
 	$(CC) $(FLAGS) -fPIC -c $(LIB_NAME).c -o $(LIB_NAME).o
 	$(CC) $(FLAGS) -fPIC -shared -o lib$(LIB_NAME).so $(LIB_NAME).o
