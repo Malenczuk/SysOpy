@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
                         {"lib",    no_argument,       &mode, 1},
                         {"sys",    no_argument,       &mode, 0},
                         {"file",   required_argument, 0, 'F'},
-                        {"nubmer", required_argument, 0, 'n'},
+                        {"number", required_argument, 0, 'n'},
                         {"size",   required_argument, 0, 's'},
                         {"copy",   required_argument, 0, 'c'},
                         {0, 0, 0, 0}

@@ -1,10 +1,9 @@
 #include <_G_config.h>
 #include "lib.h"
 
-
 int generateFile(char *filePath, int numberOfRecords, int recordSize){
     FILE *file = fopen(filePath, "w+");
-    FILE *rnd = fopen("/dev/urandom", "r");
+    FILE *rnd = fopen("/dev/random", "r");
     char *tmp = malloc(recordSize * sizeof(char));
     for (int i = 0; i < numberOfRecords; ++i){
         if(fread(tmp, sizeof(char), (size_t) recordSize, rnd) != recordSize) return 1;

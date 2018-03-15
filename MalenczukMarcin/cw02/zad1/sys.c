@@ -1,10 +1,8 @@
 #include "sys.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <fcntl.h>
+
 int sysGenerateFile(char *filePath, int numberOfRecords, int recordSize){
-    int file = open(filePath, O_CREAT | O_WRONLY | O_TRUNC);
-    int rnd = open("/dev/urandom", O_RDONLY);
+    int file = open(filePath, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+    int rnd = open("/dev/random", O_RDONLY);
     char *tmp = malloc(recordSize * sizeof(char));
     for (int i = 0; i < numberOfRecords; ++i){
         if(read(rnd, tmp, (size_t) recordSize * sizeof(char)) != recordSize) return 1;
@@ -23,7 +21,7 @@ int sysGenerateFile(char *filePath, int numberOfRecords, int recordSize){
 
 int sysCopyFile(char *sourcePath, char *targetPath, int numberOfRecords, int recordSize){
     int source = open(sourcePath, O_RDONLY);
-    int target = open(targetPath, O_CREAT | O_WRONLY | O_TRUNC);
+    int target = open(targetPath, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
     char *tmp = malloc(recordSize * sizeof(char));
 
     for (int i = 0; i < numberOfRecords; i++){
@@ -45,17 +43,17 @@ int sysSortFile(char *filePath, int numberOfRecords, int recordSize){
     int j;
 
     for(int i = 0; i < numberOfRecords; i++){
-        lseek(file, i * offset, 0);
+        lseek(file, i * offset, SEEK_SET);
 
         if(read(file, r0, (size_t) recordSize * sizeof(char)) != recordSize) return 1;
 
         for(j = i-1; j >= 0; j--){
-            lseek(file, j * offset, 0);
+            lseek(file, j * offset, SEEK_SET);
             if(read(file, r1, (size_t) recordSize * sizeof(char)) != recordSize) return 1;
             if(r0[0] >= r1[0]) break;
             if(write(file, r1, (size_t) recordSize * sizeof(char)) != recordSize) return 1;
         }
-        lseek(file, (j+1) * offset, 0);
+        lseek(file, (j+1) * offset, SEEK_SET);
         if(write(file, r0, (size_t) recordSize * sizeof(char)) != recordSize) return 1;
     }
 
