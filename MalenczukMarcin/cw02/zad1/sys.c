@@ -2,7 +2,7 @@
 
 int sysGenerateFile(char *filePath, int numberOfRecords, int recordSize){
     int file = open(filePath, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
-    int rnd = open("/dev/random", O_RDONLY);
+    int rnd = open("/dev/urandom", O_RDONLY);
     char *tmp = malloc(recordSize * sizeof(char));
     for (int i = 0; i < numberOfRecords; ++i){
         if(read(rnd, tmp, (size_t) recordSize * sizeof(char)) != recordSize) return 1;

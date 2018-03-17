@@ -7,6 +7,9 @@
 #include <ftw.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <zconf.h>
+#include <dirent.h>
 
 static const char default_format[] = "%d %b %H:%M";
 int search = 0;
@@ -22,40 +25,30 @@ int checkDate(struct tm *mtime){
     int sDay   = date->tm_mday == -1 ? mtime->tm_mday : date->tm_mday;
     int sHour  = date->tm_hour == -1 ? mtime->tm_hour : date->tm_hour;
     int sMin   = date->tm_min  == -1 ? mtime->tm_min  : date->tm_min;
-    int mYear  = mtime->tm_year;
-    int mMonth = mtime->tm_mon;
-    int mDay   = mtime->tm_mday;
-    int mHour  = mtime->tm_hour;
-    int mMin   = mtime->tm_min;
 
-    if(search == 0)
-        return (intcmp(sYear,   mYear) == 0 &&
-                intcmp(sMonth, mMonth) == 0 &&
-                intcmp(sDay,     mDay) == 0 &&
-                intcmp(sHour,   mHour) == 0 &&
-                intcmp(sMin,     mMin) == 0);
-
-    return (intcmp(mYear,   sYear) == search  || ((intcmp(mYear,   sYear) == 0 &&
-            intcmp(mMonth, sMonth) == search) || ((intcmp(mMonth, sMonth) == 0 &&
-            intcmp(mDay,     sDay) == search) || ((intcmp(mDay,     sDay) == 0 &&
-            intcmp(mHour,   sHour) == search) ||  (intcmp(mHour,   sHour) == 0 &&
-            intcmp(mMin,     sMin) == search)))));
+    return (intcmp(mtime->tm_year,  sYear) != 0 ? intcmp(mtime->tm_year,  sYear) :
+            intcmp(mtime->tm_mon,  sMonth) != 0 ? intcmp(mtime->tm_mon,  sMonth) :
+            intcmp(mtime->tm_mday,   sDay) != 0 ? intcmp(mtime->tm_mday,   sDay) :
+            intcmp(mtime->tm_hour,  sHour) != 0 ? intcmp(mtime->tm_hour,  sHour) :
+            intcmp(mtime->tm_min,    sMin) != 0 ? intcmp(mtime->tm_min,    sMin) :
+            0) == search;
 }
 
-int nftwFunction(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
-    struct tm lt; 
+static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
+    struct tm mtime;
     char res[32];
+    char pathBuffer[PATH_MAX+1];
     
-    (void) localtime_r(&sb->st_mtime, &lt);
-    if(!checkDate(&lt)) return 0;
+    (void) localtime_r(&sb->st_mtime, &mtime);
+    if(!checkDate(&mtime)) return 0;
     
-    // typ
+    // type
     printf( typeflag == FTW_D  ? "\033[0;34md" : 
             typeflag == FTW_F  ? "\033[0m."    : 
             typeflag == FTW_SL ? "\033[0;36ml" : 
                                  "\033[0m?");
     
-    // prawa dostępu
+    // rights
     int stMode = sb->st_mode;
     printf(stMode & S_IRUSR ? "\033[1;33mr" : "\033[0m-");
     printf(stMode & S_IWUSR ? "\033[1;31mw" : "\033[0m-");
@@ -70,7 +63,7 @@ int nftwFunction(const char *fpath, const struct stat *sb, int typeflag, struct 
     
     // size
     if(typeflag == FTW_D)
-        printf("\033[1;32m%s\033[0m ", "     -");
+        printf("\033[1;32m%*s\033[0m ", 6, "-");
     else{
         printf("\033[1;32m%*d\033[0m ", 6, (int) sb->st_size);
     }
@@ -80,12 +73,51 @@ int nftwFunction(const char *fpath, const struct stat *sb, int typeflag, struct 
     printf("\033[1;33m%s\033[0m ", ptmp->pw_name);  
     
     // date
-    strftime(res, sizeof(res), default_format, &lt);
+    strftime(res, sizeof(res), default_format, &mtime);
     printf("\033[0;34m%s\033[0m  ", res);
 
     // path
-    printf("\033[0m%s\n", fpath);
+    printf("\033[0m%s\n", realpath(fpath, pathBuffer));
+
     return 0;  
+}
+
+
+int xDnftw(const char *dirpath,
+            int (*fn) (const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf){
+    char pathBuff[PATH_MAX+1];
+    if(strlen(dirpath) > PATH_MAX)
+        return -1;
+    memcpy (pathBuff, dirpath, strlen(dirpath)+1);
+
+    DIR *dir = opendir(dirpath);
+    if (dir == NULL) {
+        return -1;
+    }
+
+    struct dirent *dirEntry;
+    struct stat st;
+    char *path = calloc(PATH_MAX, sizeof(char));
+    strcpy(path, dirpath);
+
+    while ((dirEntry = readdir(dir)) != NULL) {
+        strcpy(path, dirpath);
+        strcat(path, "/");
+        strcat(path, dirEntry->d_name);
+
+        if ((strcmp(dirEntry->d_name, ".") == 0 || strcmp(dirEntry->d_name, "..") == 0)) continue;
+
+        if(stat(path, &st) >= 0) {
+            if (S_ISDIR(st.st_mode)) {
+                fn(path, &st, FTW_D, NULL);
+                xDnftw(path, fn);
+            } else if(S_ISREG(st.st_mode)) {
+                fn(path, &st, FTW_F, NULL);
+            }
+        }
+    }
+
+    closedir(dir);
 }
 
 void initDate(){
@@ -182,9 +214,10 @@ int main (int argc, char **argv)
             printf ("%s ", argv[optind++]);
         putchar ('\n');
     }
+    
     printf("Permissions  Size User  Date Modified Name\n");
-    nftw(path, nftwFunction, 10, FTW_PHYS);
-
+    nftw(path, displayInfo, 10, FTW_PHYS);
+    xDnftw(path, displayInfo);
     free(date);
     exit (0);
 }

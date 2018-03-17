@@ -3,10 +3,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "lib.h"
 #include "sys.h"
 
+
 static int mode;
+
+long int getTime(struct timeval *t) {
+    return (long int)t->tv_sec * 1000000 + (long int)t->tv_usec;
+}
 
 int main(int argc, char *argv[]) {
     int c;
@@ -21,13 +29,13 @@ int main(int argc, char *argv[]) {
                         {"file",   required_argument, 0, 'F'},
                         {"number", required_argument, 0, 'n'},
                         {"size",   required_argument, 0, 's'},
-                        {"copy",   required_argument, 0, 'c'},
+                        {"copy",   required_argument, 0, 'C'},
                         {0, 0, 0, 0}
                 };
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "F:n:s:c:",
+        c = getopt_long(argc, argv, "F:n:s:C:",
                         long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -56,7 +64,7 @@ int main(int argc, char *argv[]) {
                 printf("option -s with value `%s'\n", optarg);
                 recordSize = (int) strtol(optarg, '\0', 10);
                 break;
-            case 'c':
+            case 'C':
                 printf("option -c with value `%s'\n", optarg);
                 copyPath = optarg;
                 break;
@@ -74,26 +82,45 @@ int main(int argc, char *argv[]) {
             printf("%s ", argv[optind++]);
         putchar('\n');
     }
-    if(mode) {
-        if (filePath)
-            if (generateFile(filePath, numberOfRecords, recordSize))
-                printf("1");
-        if (filePath && copyPath)
-            if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
-                printf("2");
-        if (filePath && copyPath)
-            if (sortFile(copyPath, numberOfRecords, recordSize))
-                printf("3");
-    } else {
-        if(filePath)
-            if(sysGenerateFile(filePath, numberOfRecords, recordSize))
-                printf("1");
-        if(filePath && copyPath)
-            if(sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
-                printf("2");
-        if(filePath && copyPath)
-            if(sysSortFile(copyPath, numberOfRecords, recordSize))
-                printf("3");
+    struct rusage usage;
+    long int s_start, s_end, u_start, u_end, r_start, r_end;
+    struct timeval real;
+    getrusage(RUSAGE_SELF, &usage);
+    gettimeofday(&real, 0);
+    s_start = getTime(&usage.ru_stime);
+    u_start = getTime(&usage.ru_utime);
+    r_start = getTime(&real);
+    for(int i = 0; i < 10000; i++) {
+        if (mode) {
+            if (filePath)
+                if (generateFile(filePath, numberOfRecords, recordSize))
+                    printf("1");
+            if (filePath && copyPath)
+                if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
+                    printf("2");
+            if (filePath && copyPath)
+                if (sortFile(copyPath, numberOfRecords, recordSize))
+                    printf("3");
+        } else {
+            if (filePath)
+                if (sysGenerateFile(filePath, numberOfRecords, recordSize))
+                    printf("1");
+            if (filePath && copyPath)
+                if (sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
+                    printf("2");
+            if (filePath && copyPath)
+                if (sysSortFile(copyPath, numberOfRecords, recordSize))
+                    printf("3");
+        }
     }
+    getrusage(RUSAGE_SELF, &usage);
+    gettimeofday(&real, 0);
+    s_end = getTime(&usage.ru_stime);
+    u_end = getTime(&usage.ru_utime);
+    r_end = getTime(&real);
+    printf("System: %*ldµs \nUser:   %*ldµs \nReal:   %*ldµs\n\n",
+        10, (s_end - s_start)/10000,
+        10, (u_end - u_start)/10000,
+        10, (r_end - r_start)/10000);
     return 0;
 }
