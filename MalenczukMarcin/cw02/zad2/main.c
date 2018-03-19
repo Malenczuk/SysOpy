@@ -83,8 +83,8 @@ static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, s
 }
 
 
-int xDnftw(const char *dirpath,
-            int (*fn) (const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf){
+int customExa(const char *dirpath,
+              int (*fn)(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)){
     char pathBuff[PATH_MAX+1];
     if(strlen(dirpath) > PATH_MAX)
         return -1;
@@ -97,22 +97,20 @@ int xDnftw(const char *dirpath,
 
     struct dirent *dirEntry;
     struct stat st;
-    char *path = calloc(PATH_MAX, sizeof(char));
-    strcpy(path, dirpath);
 
     while ((dirEntry = readdir(dir)) != NULL) {
-        strcpy(path, dirpath);
-        strcat(path, "/");
-        strcat(path, dirEntry->d_name);
+        memcpy(pathBuff, dirpath, strlen(dirpath));
+        strcat(pathBuff, "/");
+        strcat(pathBuff, dirEntry->d_name);
 
         if ((strcmp(dirEntry->d_name, ".") == 0 || strcmp(dirEntry->d_name, "..") == 0)) continue;
 
-        if(stat(path, &st) >= 0) {
+        if(stat(pathBuff, &st) >= 0) {
             if (S_ISDIR(st.st_mode)) {
-                fn(path, &st, FTW_D, NULL);
-                xDnftw(path, fn);
+                fn(pathBuff, &st, FTW_D, NULL);
+                customExa(pathBuff, fn);
             } else if(S_ISREG(st.st_mode)) {
-                fn(path, &st, FTW_F, NULL);
+                fn(pathBuff, &st, FTW_F, NULL);
             }
         }
     }
@@ -217,7 +215,8 @@ int main (int argc, char **argv)
     
     printf("Permissions  Size User  Date Modified Name\n");
     nftw(path, displayInfo, 10, FTW_PHYS);
-    xDnftw(path, displayInfo);
+    printf("\n\n");
+    customExa(path, displayInfo);
     free(date);
     exit (0);
 }
