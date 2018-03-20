@@ -1,5 +1,17 @@
-
-
+comment:
+Co do kopiowania szybko zauważamy iż wraz z zwiększeniem
+ilości rekordów czas zwiększa sie linowo nie ważen czy
+to dla funkcji systemowych czy bibliotecznych. Natomiast
+przy zwiększaniu rekordów w czasie sortowania czasy zwiększają
+się kwadratowo czego mogliśmy się spodziewać z powodu złożoności
+algorytmu sortowania O(n^2). Co do różnicy pomiędzy funkcjami
+systemowymi a bibliotecznymi podczas kopiowania dla małych
+wielkości bloków funkcję systemowe są o wiele wolniejsze, ale
+wraz ze wzrostem wielkości czasy zbliżaja się do siebie.
+Sytuacja zmienia sie przy sortowaniu gdzie to funkcje systemowe
+mają przewagę nad bibiliotecznymi chociaż nie aż tak wielką jak
+w przypadku kopiowania. Różnica ta maleja wraz ze wzrostem
+wielkości bloków tak jak przy kopiowaniu.
 
 
 option --lib
