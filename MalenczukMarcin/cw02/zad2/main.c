@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <zconf.h>
 #include <dirent.h>
+#include <math.h>
 
 static const char default_format[] = "%d %b %H:%M";
 int search = 0;
@@ -61,11 +62,22 @@ static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, s
     printf(stMode & S_IXOTH ? "\033[0;32mx" : "\033[0m-");
     printf("\033[0m ");
     
+    double size = 0;
     // size
     if(typeflag == FTW_D)
-        printf("\033[1;32m%*s\033[0m ", 6, "-");
+        printf("\033[1;32m%*s\033[0m ", 5, "-");
     else{
-        printf("\033[1;32m%*d\033[0m ", 6, (int) sb->st_size);
+        size = (double) sb->st_size;
+        if(size < 1000)
+            printf("\033[1;32m%*.*f\033[0m ", 5, 0, size);
+        else if (size < 1000000)
+            printf("\033[1;32m%*.*fk\033[0m ", 4, 1, size/1000);
+        else if (size < 1000000000)
+            printf("\033[1;32m%*.*fM\033[0m ", 4, 1, size/1000000);
+        else if (size < 1000000000000)
+            printf("\033[1;32m%*.*fG\033[0m ", 4, 1, size/1000000000);
+        else if (size < 1000000000000000)
+            printf("\033[1;32m%*.*fT\033[0m ", 4, 1, size/1000000000000);    
     }
 
     // owner
@@ -88,7 +100,7 @@ int customExa(const char *dirpath,
     char pathBuff[PATH_MAX+1];
     if(strlen(dirpath) > PATH_MAX)
         return -1;
-    memcpy (pathBuff, dirpath, strlen(dirpath)+1);
+    //strcpy(pathBuff, dirpath);
 
     DIR *dir = opendir(dirpath);
     if (dir == NULL) {
@@ -99,23 +111,26 @@ int customExa(const char *dirpath,
     struct stat st;
 
     while ((dirEntry = readdir(dir)) != NULL) {
-        memcpy(pathBuff, dirpath, strlen(dirpath));
+        strcpy(pathBuff, dirpath);
         strcat(pathBuff, "/");
         strcat(pathBuff, dirEntry->d_name);
 
         if ((strcmp(dirEntry->d_name, ".") == 0 || strcmp(dirEntry->d_name, "..") == 0)) continue;
 
-        if(stat(pathBuff, &st) >= 0) {
+        if(lstat(pathBuff, &st) >= 0) {
             if (S_ISDIR(st.st_mode)) {
                 fn(pathBuff, &st, FTW_D, NULL);
                 customExa(pathBuff, fn);
             } else if(S_ISREG(st.st_mode)) {
                 fn(pathBuff, &st, FTW_F, NULL);
+            } else if(S_ISLNK(st.st_mode)){
+                fn(pathBuff, &st, FTW_SL, NULL);
             }
         }
     }
 
     closedir(dir);
+    return 0;
 }
 
 void initDate(){
@@ -213,7 +228,7 @@ int main (int argc, char **argv)
         putchar ('\n');
     }
     
-    printf("Permissions  Size User  Date Modified Name\n");
+    printf("Permissions Size User  Date Modified Name\n");
     nftw(path, displayInfo, 10, FTW_PHYS);
     printf("\n\n");
     customExa(path, displayInfo);
