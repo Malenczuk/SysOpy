@@ -3,8 +3,8 @@ FLAGS = -std=c99 -Wall
 MAIN_SRC = main
 OPTIM ?= -O2
 
-static:
-	$(CC) $(FLAGS) $(MAIN_SRC).c -o $(MAIN_SRC)_static $(OPTIM)
+main:
+	$(CC) $(FLAGS) $(MAIN_SRC).c -o $(MAIN_SRC) $(OPTIM)
 	
 	make clean
 
@@ -14,4 +14,4 @@ clean:
 	rm -f *.a
 	
 clean_all:
-	rm $(MAIN_SRC)_static		
+	rm $(MAIN_SRC)		

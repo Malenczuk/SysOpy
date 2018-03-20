@@ -95,9 +95,9 @@ int main(int argc, char *argv[]) {
             if (filePath)
                 if (generateFile(filePath, numberOfRecords, recordSize))
                     printf("1");
-            if (filePath && copyPath)
-                if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
-                    printf("2");
+            // if (filePath && copyPath)
+            //     if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
+            //         printf("2");
             if (filePath && copyPath)
                 if (sortFile(copyPath, numberOfRecords, recordSize))
                     printf("3");
@@ -105,9 +105,9 @@ int main(int argc, char *argv[]) {
             if (filePath)
                 if (sysGenerateFile(filePath, numberOfRecords, recordSize))
                     printf("1");
-            if (filePath && copyPath)
-                if (sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
-                    printf("2");
+            // if (filePath && copyPath)
+            //     if (sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
+            //         printf("2");
             if (filePath && copyPath)
                 if (sysSortFile(copyPath, numberOfRecords, recordSize))
                     printf("3");

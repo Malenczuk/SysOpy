@@ -11,6 +11,7 @@
 #include <zconf.h>
 #include <dirent.h>
 #include <math.h>
+#include <limits.h>
 
 static const char default_format[] = "%d %b %H:%M";
 int search = 0;
@@ -65,19 +66,17 @@ static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, s
     double size = 0;
     // size
     if(typeflag == FTW_D)
-        printf("\033[1;32m%*s\033[0m ", 5, "-");
+        printf("\033[1;32m%*s\033[0m ", 6, "-");
     else{
         size = (double) sb->st_size;
         if(size < 1000)
-            printf("\033[1;32m%*.*f\033[0m ", 5, 0, size);
-        else if (size < 1000000)
-            printf("\033[1;32m%*.*fk\033[0m ", 4, 1, size/1000);
-        else if (size < 1000000000)
-            printf("\033[1;32m%*.*fM\033[0m ", 4, 1, size/1000000);
-        else if (size < 1000000000000)
-            printf("\033[1;32m%*.*fG\033[0m ", 4, 1, size/1000000000);
-        else if (size < 1000000000000000)
-            printf("\033[1;32m%*.*fT\033[0m ", 4, 1, size/1000000000000);    
+            printf("\033[1;32m%*.*f\033[0m ", 6, 0, size);
+        else {
+            int i = 0;
+            char *unit = "kMGTPEZY";
+            while ((size /= 1000) >= 1000) i++;
+            printf("\033[1;32m%*.*f%c\033[0m ", 5, 1, size, unit[i]);
+        }
     }
 
     // owner
@@ -98,12 +97,13 @@ static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, s
 int customExa(const char *dirpath,
               int (*fn)(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)){
     char pathBuff[PATH_MAX+1];
-    if(strlen(dirpath) > PATH_MAX)
-        return -1;
-    //strcpy(pathBuff, dirpath);
-
+    if(strlen(dirpath) > PATH_MAX) {
+        printf("Path length exceeded.\n");
+        return 1;
+    }
     DIR *dir = opendir(dirpath);
     if (dir == NULL) {
+        printf("Error while opening dir at path %s.\n", dirpath);
         return -1;
     }
 
@@ -112,6 +112,10 @@ int customExa(const char *dirpath,
 
     while ((dirEntry = readdir(dir)) != NULL) {
         strcpy(pathBuff, dirpath);
+        if(strlen(dirpath) + strlen(dirEntry->d_name) + 1 > PATH_MAX) {
+            printf("Path length exceeded.\n");
+            return 1;
+        }
         strcat(pathBuff, "/");
         strcat(pathBuff, dirEntry->d_name);
 
@@ -228,7 +232,7 @@ int main (int argc, char **argv)
         putchar ('\n');
     }
     
-    printf("Permissions Size User  Date Modified Name\n");
+    printf("Permissions  Size User  Date Modified Path\n");
     nftw(path, displayInfo, 10, FTW_PHYS);
     printf("\n\n");
     customExa(path, displayInfo);
