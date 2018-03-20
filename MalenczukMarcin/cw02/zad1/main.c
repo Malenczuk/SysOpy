@@ -9,11 +9,31 @@
 #include "lib.h"
 #include "sys.h"
 
+#ifndef ITERATIONS
+#define ITERATIONS 1
+#endif
+typedef struct{
+    long int stime;
+    long int utime;
+    long int rtime;
+}Measurement;
 
-static int mode;
+static int mode = 0;
+static int gen = 0;
+static int sort = 0;
+
 
 long int getTime(struct timeval *t) {
     return (long int)t->tv_sec * 1000000 + (long int)t->tv_usec;
+}
+
+void printTimeDiff(Measurement fstMeasurement, Measurement sndMeasurement){
+    long int sTime = (sndMeasurement.stime - fstMeasurement.stime) / ITERATIONS;
+    long int uTime = (sndMeasurement.utime - fstMeasurement.utime) / ITERATIONS;
+    long int rTime = (sndMeasurement.rtime - fstMeasurement.rtime) / ITERATIONS;
+    printf("System: %*.*lfs\n",15,6,(double) sTime/1000000);
+    printf("User:   %*.*lfs\n",15,6,(double) uTime/1000000);
+    printf("Real:   %*.*lfs\n",15,6,(double) rTime/1000000);
 }
 
 int main(int argc, char *argv[]) {
@@ -26,6 +46,8 @@ int main(int argc, char *argv[]) {
                 {
                         {"lib",    no_argument,       &mode, 1},
                         {"sys",    no_argument,       &mode, 0},
+                        {"gen",    no_argument,       &gen,  1},
+                        {"sort",   no_argument,       &sort, 1},
                         {"file",   required_argument, 0, 'F'},
                         {"number", required_argument, 0, 'n'},
                         {"size",   required_argument, 0, 's'},
@@ -82,45 +104,48 @@ int main(int argc, char *argv[]) {
             printf("%s ", argv[optind++]);
         putchar('\n');
     }
+
+    Measurement measurements[2];
     struct rusage usage;
-    long int s_start, s_end, u_start, u_end, r_start, r_end;
     struct timeval real;
+
     getrusage(RUSAGE_SELF, &usage);
     gettimeofday(&real, 0);
-    s_start = getTime(&usage.ru_stime);
-    u_start = getTime(&usage.ru_utime);
-    r_start = getTime(&real);
-    for(int i = 0; i < 10000; i++) {
+    measurements[0].stime = getTime(&usage.ru_stime);
+    measurements[0].utime = getTime(&usage.ru_utime);
+    measurements[0].rtime = getTime(&real);
+
+    for(int i = 0; i < ITERATIONS; i++) {
         if (mode) {
-            if (filePath)
+            if (gen && filePath)
                 if (generateFile(filePath, numberOfRecords, recordSize))
-                    printf("1");
-            // if (filePath && copyPath)
-            //     if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
-            //         printf("2");
+                    exit(1);
             if (filePath && copyPath)
-                if (sortFile(copyPath, numberOfRecords, recordSize))
-                    printf("3");
+                if (copyFile(filePath, copyPath, numberOfRecords, recordSize))
+                    exit(1);
+            if (sort && filePath)
+                if (sortFile(filePath, numberOfRecords, recordSize))
+                    exit(1);
         } else {
-            if (filePath)
+            if (gen && filePath)
                 if (sysGenerateFile(filePath, numberOfRecords, recordSize))
-                    printf("1");
-            // if (filePath && copyPath)
-            //     if (sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
-            //         printf("2");
+                    exit(1);
             if (filePath && copyPath)
-                if (sysSortFile(copyPath, numberOfRecords, recordSize))
-                    printf("3");
+                if (sysCopyFile(filePath, copyPath, numberOfRecords, recordSize))
+                    exit(1);
+            if (sort && filePath)
+                if (sysSortFile(filePath, numberOfRecords, recordSize))
+                    exit(1);
         }
     }
+
     getrusage(RUSAGE_SELF, &usage);
     gettimeofday(&real, 0);
-    s_end = getTime(&usage.ru_stime);
-    u_end = getTime(&usage.ru_utime);
-    r_end = getTime(&real);
-    printf("System: %*ldµs \nUser:   %*ldµs \nReal:   %*ldµs\n\n",
-        10, (s_end - s_start)/10000,
-        10, (u_end - u_start)/10000,
-        10, (r_end - r_start)/10000);
+    measurements[1].stime = getTime(&usage.ru_stime);
+    measurements[1].utime = getTime(&usage.ru_utime);
+    measurements[1].rtime = getTime(&real);
+
+    printTimeDiff(measurements[0], measurements[1]);
+
     return 0;
 }

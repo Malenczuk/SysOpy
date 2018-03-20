@@ -1,0 +1,293 @@
+
+
+
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `5000000'
+option -s with value `4'
+option -c with value `txt2.txt'
+System:        0.031840s
+User:          0.158790s
+Real:          0.191251s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `5000000'
+option -s with value `4'
+option -c with value `txt2.txt'
+System:        9.568227s
+User:          1.043050s
+Real:         10.659312s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `10000000'
+option -s with value `4'
+option -c with value `txt2.txt'
+System:        0.080530s
+User:          0.319743s
+Real:          0.402697s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `10000000'
+option -s with value `4'
+option -c with value `txt2.txt'
+System:       19.424171s
+User:          2.086061s
+Real:         21.609109s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `5000000'
+option -s with value `512'
+option -c with value `txt2.txt'
+System:        2.982323s
+User:          0.433592s
+Real:          6.167396s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `5000000'
+option -s with value `512'
+option -c with value `txt2.txt'
+System:       11.047177s
+User:          1.046761s
+Real:         13.308596s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `10000000'
+option -s with value `512'
+option -c with value `txt2.txt'
+System:        5.769685s
+User:          0.804865s
+Real:         11.132813s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `10000000'
+option -s with value `512'
+option -c with value `txt2.txt'
+System:       24.104267s
+User:          2.124494s
+Real:         32.784697s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `500000'
+option -s with value `4096'
+option -c with value `txt2.txt'
+System:        2.032990s
+User:          0.192569s
+Real:          2.603342s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `500000'
+option -s with value `4096'
+option -c with value `txt2.txt'
+System:        3.900338s
+User:          0.122108s
+Real:         10.713252s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `1000000'
+option -s with value `4096'
+option -c with value `txt2.txt'
+System:        4.881716s
+User:          0.347654s
+Real:         10.334984s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `1000000'
+option -s with value `4096'
+option -c with value `txt2.txt'
+System:        5.060575s
+User:          0.208771s
+Real:         10.672592s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `100000'
+option -s with value `8192'
+option -c with value `txt2.txt'
+System:        1.292033s
+User:          0.045828s
+Real:          2.681266s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `100000'
+option -s with value `8192'
+option -c with value `txt2.txt'
+System:        1.119916s
+User:          0.026271s
+Real:          2.457913s
+
+option --lib
+option -F with value `txt.txt'
+option -n with value `500000'
+option -s with value `8192'
+option -c with value `txt2.txt'
+System:        4.237621s
+User:          0.261172s
+Real:         10.811476s
+
+option --sys
+option -F with value `txt.txt'
+option -n with value `500000'
+option -s with value `8192'
+option -c with value `txt2.txt'
+System:        4.707469s
+User:          0.108338s
+Real:         10.296450s
+
+
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `4'
+System:        2.290198s
+User:          0.478651s
+Real:          2.777937s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `4'
+System:        1.749504s
+User:          0.298944s
+Real:          2.052305s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `4'
+System:       13.317409s
+User:          2.991320s
+Real:         16.355186s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `4'
+System:       10.885269s
+User:          1.673952s
+Real:         12.601551s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `512'
+System:        2.169119s
+User:          0.433156s
+Real:          2.607539s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `512'
+System:        1.832212s
+User:          0.292638s
+Real:          2.133850s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `512'
+System:       13.918807s
+User:          3.044841s
+Real:         17.017072s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `512'
+System:       11.612490s
+User:          1.840392s
+Real:         13.482756s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `4096'
+System:        2.297295s
+User:          0.379511s
+Real:          2.682916s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `4096'
+System:        2.205031s
+User:          0.278081s
+Real:          2.493072s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `4096'
+System:       15.610503s
+User:          2.412245s
+Real:         18.071814s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `4096'
+System:       15.199461s
+User:          1.793671s
+Real:         17.057710s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `8192'
+System:        3.220447s
+User:          0.411089s
+Real:          3.639359s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `2000'
+option -s with value `8192'
+System:        3.295919s
+User:          0.275978s
+Real:          3.579936s
+
+option --lib
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `8192'
+System:       21.034238s
+User:          2.367205s
+Real:         23.463847s
+
+option --sys
+option --sort
+option -F with value `txt2.txt'
+option -n with value `5000'
+option -s with value `8192'
+System:       20.935843s
+User:          1.706172s
+Real:         22.706535s
