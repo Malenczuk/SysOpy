@@ -39,7 +39,7 @@ int checkDate(struct tm *mtime){
 static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
     struct tm mtime;
     char res[32];
-    
+
     (void) localtime_r(&sb->st_mtime, &mtime);
     if(!checkDate(&mtime)) return 0;
     
@@ -123,7 +123,12 @@ int customExa(const char *dirpath,
         if(lstat(pathBuff, &st) >= 0) {
             if (S_ISDIR(st.st_mode)) {
                 fn(pathBuff, &st, FTW_D, NULL);
-                customExa(pathBuff, fn);
+                pid_t pid = vfork();
+                if(pid == 0){
+                    printf("Fork\n");
+                    customExa(pathBuff, fn);
+                    exit(0);
+                }
             } else if(S_ISREG(st.st_mode)) {
                 fn(pathBuff, &st, FTW_F, NULL);
             } else if(S_ISLNK(st.st_mode)){
@@ -232,8 +237,8 @@ int main (int argc, char **argv)
     }
     char pathBuff[PATH_MAX+1];
     printf("Permissions  Size User  Date Modified Path\n");
-    nftw(realpath(path, pathBuff), displayInfo, 10, FTW_PHYS);
-    printf("\n\n");
+//    nftw(realpath(path, pathBuff), displayInfo, 10, FTW_PHYS);
+//    printf("\n\n");
     customExa(realpath(path, pathBuff), displayInfo);
     free(date);
     exit (0);
