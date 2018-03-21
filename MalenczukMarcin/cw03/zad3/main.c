@@ -2,12 +2,40 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <memory.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #define ARGS_MAX 64
 #define LINE_MAX 256
 
+void setLimits(char *cpuArg, char *memArg){
+    long int cpuLimit = strtol(cpuArg, NULL, 10);
+    long int memLimit = strtol(memArg, NULL, 10) * 1048576;
+
+    struct rlimit cpuRLimit;
+    struct rlimit memRLimit;
+
+    cpuRLimit.rlim_max = (rlim_t) cpuLimit;
+    cpuRLimit.rlim_cur = (rlim_t) cpuLimit;
+    memRLimit.rlim_max = (rlim_t) memLimit;
+    memRLimit.rlim_cur = (rlim_t) memLimit;
+
+    if(setrlimit(RLIMIT_CPU, &cpuRLimit) == -1){
+        printf("Unable to make cpu limit!\n");
+    }
+    if(setrlimit(RLIMIT_DATA, &memRLimit) == -1){
+        printf("Unable to make memory limit!\n");
+    }
+    if(setrlimit(RLIMIT_STACK, &memRLimit) == -1){
+        printf("Unable to make memory limit!\n");
+    }
+
+}
 int main(int argc, char const *argv[]) {
-    FILE* file = fopen("/home/malen/AGH/IEiT/SysOpy/MalenczukMarcin/cw03/zad2/txt.txt", "r");
+    if(argc < 4) exit(1);
+    FILE* file = fopen(argv[1], "r");
+    if(!file) exit(1);
     char r0[LINE_MAX];
     char *args[ARGS_MAX];
     int argNum = 0;

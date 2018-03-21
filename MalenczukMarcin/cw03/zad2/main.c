@@ -2,12 +2,15 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #define ARGS_MAX 64
 #define LINE_MAX 256
 
 int main(int argc, char const *argv[]) {
-    FILE* file = fopen("/home/malen/AGH/IEiT/SysOpy/MalenczukMarcin/cw03/zad2/txt.txt", "r");
+    if(argc < 2) exit(1); 
+    FILE* file = fopen(argv[1], "r");
+    if(!file) exit(1);
     char r0[LINE_MAX];
     char *args[ARGS_MAX];
     int argNum = 0;
