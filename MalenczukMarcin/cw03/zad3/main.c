@@ -9,7 +9,7 @@
 #define ARGS_MAX 64
 #define LINE_MAX 256
 
-void setLimits(char *cpuArg, char *memArg){
+void setLimits(char const *cpuArg, char const *memArg){
     long int cpuLimit = strtol(cpuArg, NULL, 10);
     long int memLimit = strtol(memArg, NULL, 10) * 1048576;
 
@@ -21,16 +21,12 @@ void setLimits(char *cpuArg, char *memArg){
     memRLimit.rlim_max = (rlim_t) memLimit;
     memRLimit.rlim_cur = (rlim_t) memLimit;
 
-    if(setrlimit(RLIMIT_CPU, &cpuRLimit) == -1){
+    if(setrlimit(RLIMIT_CPU, &cpuRLimit) == -1)
         printf("Unable to make cpu limit!\n");
-    }
-    if(setrlimit(RLIMIT_DATA, &memRLimit) == -1){
+    if(setrlimit(RLIMIT_DATA, &memRLimit) == -1)
         printf("Unable to make memory limit!\n");
-    }
-    if(setrlimit(RLIMIT_STACK, &memRLimit) == -1){
+    if(setrlimit(RLIMIT_STACK, &memRLimit) == -1)
         printf("Unable to make memory limit!\n");
-    }
-
 }
 int main(int argc, char const *argv[]) {
     if(argc < 4) exit(1);
@@ -43,20 +39,21 @@ int main(int argc, char const *argv[]) {
         argNum = 0;
         while((args[argNum++] = strtok(argNum == 0 ? r0 : NULL, " \n\t")) != NULL){
             if(argNum + 1 >= ARGS_MAX){
-                fprintf(stderr, "Command exceeds maximum number (%d) of arguments: %s\nWith arguments:", ARGS_MAX , args[0]);
+                fprintf(stderr, "Command exceeds maximum number (%d) of arguments: %s\nWith arguments:", ARGS_MAX - 2 , args[0]);
                 for(int i = 1; i < argNum; i++) fprintf(stderr, " %s", args[i]);
                 fprintf(stderr, "\n");
             }
         };
         pid_t pid = vfork();
         if(!pid) {
+            setLimits(argv[2], argv[3]);
             execvp(args[0], args);
         }
         int status;
         wait(&status);
         if(status){
             fprintf(stderr, "Error while running command: %s\nWith arguments:", args[0]);
-            for(int i = 1; i < argNum; i++) fprintf(stderr, " %s", args[i]);
+            for(int i = 1; i < argNum - 1; i++) fprintf(stderr, " %s", args[i]);
             fprintf(stderr, "\n");
         }
     }
