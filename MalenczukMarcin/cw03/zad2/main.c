@@ -8,31 +8,40 @@
 #define LINE_MAX 256
 
 int main(int argc, char const *argv[]) {
-    if(argc < 2) exit(1); 
+    if(argc < 2) {
+        fprintf(stderr, "To little Arguments.\n");
+        exit(1);
+    }
     FILE* file = fopen(argv[1], "r");
-    if(!file) exit(1);
+    if(!file) {
+        fprintf(stderr, "Error while opening file %s\n", argv[1]);
+        exit(1);
+    }
     char r0[LINE_MAX];
+    char r1[LINE_MAX];
     char *args[ARGS_MAX];
-    int argNum = 0;
+    int argNum = 0, status = 0;
     while(fgets(r0, LINE_MAX, file)){
+        strcpy(r1, r0);
         argNum = 0;
-        while((args[argNum++] = strtok(argNum == 0 ? r0 : NULL, " \n\t")) != NULL){
-            if(argNum + 1 >= ARGS_MAX){
-                fprintf(stderr, "Command exceeds maximum number (%d) of arguments: %s\nWith arguments:", ARGS_MAX , args[0]);
-                for(int i = 1; i < argNum; i++) fprintf(stderr, " %s", args[i]);
-                fprintf(stderr, "\n");
-            }
-        };
-        pid_t pid = vfork();
+        while((args[argNum] = strtok(argNum == 0 ? r1 : NULL, " \n\t\0")) != NULL) {
+            if (argNum >= ARGS_MAX)
+                fprintf(stderr, "Command exceeds maximum number (%d) of arguments: %s\n", ARGS_MAX - 2, r0);
+            argNum ++;
+        }
+        if(argNum == 0) continue;
+
+        pid_t pid = fork();
         if(!pid) {
             execvp(args[0], args);
+            printf("Command: %s \nNot found\n", r1);
+            exit(1);
         }
-        int status;
+
         wait(&status);
-        if(status){
-            fprintf(stderr, "Error while running command: %s\nWith arguments:", args[0]);
-            for(int i = 1; i < argNum; i++) fprintf(stderr, " %s", args[i]);
-            fprintf(stderr, "\n");
+        if(status) {
+            fprintf(stderr, "Error while running command: %swith exit code: %d\n", r0, status);
+            break;
         }
     }
     fclose(file);

@@ -1,3 +1,5 @@
-ls -l -a
-echo xD
-sleep 2
+./ls -l
+ls -la
+
+echo AlaMaKota
+

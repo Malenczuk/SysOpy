@@ -123,9 +123,9 @@ int customExa(const char *dirpath,
         if(lstat(pathBuff, &st) >= 0) {
             if (S_ISDIR(st.st_mode)) {
                 fn(pathBuff, &st, FTW_D, NULL);
-                pid_t pid = vfork();
+                pid_t pid = fork();
                 if(pid == 0){
-                    printf("Fork\n");
+                    // printf("Fork\n");
                     customExa(pathBuff, fn);
                     exit(0);
                 }
