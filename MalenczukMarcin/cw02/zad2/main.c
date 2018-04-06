@@ -39,7 +39,6 @@ int checkDate(struct tm *mtime){
 static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
     struct tm mtime;
     char res[32];
-    char pathBuffer[PATH_MAX+1];
     
     (void) localtime_r(&sb->st_mtime, &mtime);
     if(!checkDate(&mtime)) return 0;
@@ -88,7 +87,7 @@ static int displayInfo(const char *fpath, const struct stat *sb, int typeflag, s
     printf("\033[0;34m%s\033[0m  ", res);
 
     // path
-    printf("\033[0m%s\n", realpath(fpath, pathBuffer));
+    printf("\033[0m%s\n", fpath);
 
     return 0;  
 }
@@ -231,11 +230,11 @@ int main (int argc, char **argv)
             printf ("%s ", argv[optind++]);
         putchar ('\n');
     }
-    
+    char pathBuff[PATH_MAX+1];
     printf("Permissions  Size User  Date Modified Path\n");
-    nftw(path, displayInfo, 10, FTW_PHYS);
+    nftw(realpath(path, pathBuff), displayInfo, 10, FTW_PHYS);
     printf("\n\n");
-    customExa(path, displayInfo);
+    customExa(realpath(path, pathBuff), displayInfo);
     free(date);
     exit (0);
 }
