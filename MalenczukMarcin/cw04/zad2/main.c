@@ -15,7 +15,8 @@ volatile int k;
 volatile pid_t *childrenArr;
 volatile pid_t *awaitingArr;
 
-#define FAILURE_EXIT(code, format, ...) { printf(format, ##__VA_ARGS__); exit(code);}
+#define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
+#define WRITE_MSG(format, ...) { char buffer[255]; sprintf(buffer, format, ##__VA_ARGS__); write(1, buffer, strlen(buffer));}
 
 int checkIfChildren(pid_t pid) {
     for (int i = 0; i < N; i++)
@@ -32,10 +33,10 @@ void removeChild(pid_t pid) {
 }
 
 void intHandler(int signum, siginfo_t *info, void *context) {
-    printf("Mother: Received SIGINT\n");
+    WRITE_MSG("Mother: Received SIGINT\n");
 
     for (int i = 0; i < N; i++)
-        if (childrenArr[i] > 0) {
+        if (childrenArr[i] != -1) {
             kill(childrenArr[i], SIGKILL);
             waitpid(childrenArr[i], NULL, 0);
         }
@@ -44,35 +45,41 @@ void intHandler(int signum, siginfo_t *info, void *context) {
 }
 
 void usrHandler(int signum, siginfo_t *info, void *context) {
-    printf("\rMother: Received SIGUSR1 form PID: %d\n", info->si_pid);
+    WRITE_MSG("\rMother: Received SIGUSR1 form PID: %d\n", info->si_pid);
 
     if (checkIfChildren(info->si_pid) == -1)return;
 
-    if (k == K) {
+    if (k >= K) {
         kill(info->si_pid, SIGUSR1);
         waitpid(info->si_pid, NULL, 0);
     } else {
         awaitingArr[k++] = info->si_pid;
-        if (k == K)
+        if (k >= K)
             for (int i = 0; i < K; i++) {
-                kill(awaitingArr[i], SIGUSR1);
-                waitpid(awaitingArr[i], NULL, 0);
+                if (awaitingArr[i] > 0) {
+                    kill(awaitingArr[i], SIGUSR1);
+                    waitpid(awaitingArr[i], NULL, 0);
+                }
             }
     }
 }
 
 void chldHandler(int signum, siginfo_t *info, void *context) {
-    printf("Mother: Child %d has terminated, with exit status: %d\n", info->si_pid, info->si_status);
+    if (info->si_code == CLD_EXITED) {
+        WRITE_MSG("Mother: Child %d has terminated, with exit status: %d\n", info->si_pid, info->si_status);
+    } else {
+        WRITE_MSG("Mother: Child %d has terminated by signal: %d\n", info->si_pid, info->si_status);
+    }
     n--;
     if (n == 0) {
-        printf("Mother: No more children, Terminating\n");
+        WRITE_MSG("Mother: No more children, Terminating\n");
         exit(0);
     }
     removeChild(info->si_status);
 }
 
 void rtHandler(int signum, siginfo_t *info, void *context) {
-    printf("Mother: Received SIGRT: SIGMIN+%i, for PID: %d\n", signum - SIGRTMIN, info->si_pid);
+    WRITE_MSG("Mother: Received SIGRT: SIGMIN+%i, for PID: %d\n", signum - SIGRTMIN, info->si_pid);
 }
 
 int main(int argc, char *argv[]) {
@@ -84,7 +91,7 @@ int main(int argc, char *argv[]) {
     if (N < K) FAILURE_EXIT(1, "K can't be larger than N\n");
 
     childrenArr = calloc((size_t) N, sizeof(pid_t));
-    awaitingArr = calloc((size_t) K, sizeof(pid_t));
+    awaitingArr = calloc((size_t) N, sizeof(pid_t));
     n = k = 0;
 
     struct sigaction act;
@@ -117,6 +124,4 @@ int main(int argc, char *argv[]) {
 
     while (wait(NULL))
         if (errno == ECHILD) FAILURE_EXIT(2, "ERROR CHILD\n");
-
-    return 0;
 }

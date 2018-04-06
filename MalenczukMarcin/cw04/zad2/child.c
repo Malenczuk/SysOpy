@@ -16,11 +16,11 @@ int main() {
     sigdelset(&mask, SIGUSR1);
 
     srand((unsigned int) getpid());
-    int sleepTime = (unsigned int) (rand() % 11);
+    int sleepTime = (rand() % 11);
 
     printf("Hi, Im %d, sleeping for %d\n", getpid(), sleepTime);
     fflush(stdout);
-    sleep(sleepTime);
+    sleep((unsigned int) sleepTime);
 
     kill(getppid(), SIGUSR1);
 
