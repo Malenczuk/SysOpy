@@ -1,7 +1,7 @@
 #!bin/bash
 
-while true;
+while true
 do
- echo `date`
+ date
  sleep 1
 done

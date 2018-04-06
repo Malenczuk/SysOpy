@@ -5,7 +5,7 @@
 
 int waiting = 0;
 
-void handleTSTP(int signum) {
+void tstpHandler(int signum) {
     if (waiting)
         waiting = 0;
     else {
@@ -18,16 +18,16 @@ void handleTSTP(int signum) {
         sigsuspend(&mask);
     }
 }
-void handleINT(int signum){
+void intHandler(int signum){
     printf("\rOdebrano sygnał SIGINT\n");
     exit(0);
 }
 
 int main() {
-    signal(SIGTSTP, &handleTSTP);
+    signal(SIGTSTP, &tstpHandler);
 
     struct sigaction act;
-    act.sa_handler = handleINT;
+    act.sa_handler = intHandler;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
     sigaction(SIGINT, &act, NULL);
