@@ -1,8 +1,10 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <memory.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <memory.h>
+
 
 #define ARGS_MAX 64
 #define LINE_MAX 256

@@ -1,10 +1,12 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <memory.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <memory.h>
+
 
 #define ARGS_MAX 64
 #define LINE_MAX 256
@@ -12,18 +14,16 @@
 
 void setLimits(char const *cpuArg, char const *memArg){
     long int cpuLimit = strtol(cpuArg, NULL, 10);
-    long int memLimit = strtol(memArg, NULL, 10) * 1048576;
-
     struct rlimit cpuRLimit;
-    struct rlimit memRLimit;
-
     cpuRLimit.rlim_max = (rlim_t) cpuLimit;
     cpuRLimit.rlim_cur = (rlim_t) cpuLimit;
-    memRLimit.rlim_max = (rlim_t) memLimit;
-    memRLimit.rlim_cur = (rlim_t) memLimit;
-
     if(setrlimit(RLIMIT_CPU, &cpuRLimit) == -1)
         printf("Unable to make cpu limit!\n");
+
+    long int memLimit = strtol(memArg, NULL, 10) * 1048576;
+    struct rlimit memRLimit;
+    memRLimit.rlim_max = (rlim_t) memLimit;
+    memRLimit.rlim_cur = (rlim_t) memLimit;
 //    if(setrlimit(RLIMIT_AS, &memRLimit) == -1)
 //        printf("Unable to make memory limit!\n");
     if(setrlimit(RLIMIT_DATA, &memRLimit) == -1)

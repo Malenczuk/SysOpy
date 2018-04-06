@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -std=c11 -Wall
+FLAGS = -std=c99 -Wall
 MAIN_SRC = main
 OPTIM ?= -O2
 
