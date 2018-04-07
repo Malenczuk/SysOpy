@@ -8,6 +8,17 @@
 #include <errno.h>
 #include <memory.h>
 
+#define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
+#define WRITE_MSG(format, ...) { char buffer[255]; sprintf(buffer, format, ##__VA_ARGS__); write(1, buffer, strlen(buffer));}
+
+void intHandler(int, siginfo_t *, void *);
+
+void usrHandler(int, siginfo_t *, void *);
+
+void chldHandler(int, siginfo_t *, void *);
+
+void rtHandler(int, siginfo_t *, void *);
+
 volatile int N;
 volatile int K;
 volatile int n;
@@ -15,8 +26,6 @@ volatile int k;
 volatile pid_t *childrenArr;
 volatile pid_t *awaitingArr;
 
-#define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
-#define WRITE_MSG(format, ...) { char buffer[255]; sprintf(buffer, format, ##__VA_ARGS__); write(1, buffer, strlen(buffer));}
 
 int checkIfChildren(pid_t pid) {
     for (int i = 0; i < N; i++)
@@ -30,56 +39,6 @@ void removeChild(pid_t pid) {
             childrenArr[i] = -1;
             return;
         }
-}
-
-void intHandler(int signum, siginfo_t *info, void *context) {
-    WRITE_MSG("Mother: Received SIGINT\n");
-
-    for (int i = 0; i < N; i++)
-        if (childrenArr[i] != -1) {
-            kill(childrenArr[i], SIGKILL);
-            waitpid(childrenArr[i], NULL, 0);
-        }
-
-    exit(0);
-}
-
-void usrHandler(int signum, siginfo_t *info, void *context) {
-    WRITE_MSG("\rMother: Received SIGUSR1 form PID: %d\n", info->si_pid);
-
-    if (checkIfChildren(info->si_pid) == -1)return;
-
-    if (k >= K) {
-        kill(info->si_pid, SIGUSR1);
-        waitpid(info->si_pid, NULL, 0);
-    } else {
-        awaitingArr[k++] = info->si_pid;
-        if (k >= K)
-            for (int i = 0; i < K; i++) {
-                if (awaitingArr[i] > 0) {
-                    kill(awaitingArr[i], SIGUSR1);
-                    waitpid(awaitingArr[i], NULL, 0);
-                }
-            }
-    }
-}
-
-void chldHandler(int signum, siginfo_t *info, void *context) {
-    if (info->si_code == CLD_EXITED) {
-        WRITE_MSG("Mother: Child %d has terminated, with exit status: %d\n", info->si_pid, info->si_status);
-    } else {
-        WRITE_MSG("Mother: Child %d has terminated by signal: %d\n", info->si_pid, info->si_status);
-    }
-    n--;
-    if (n == 0) {
-        WRITE_MSG("Mother: No more children, Terminating\n");
-        exit(0);
-    }
-    removeChild(info->si_status);
-}
-
-void rtHandler(int signum, siginfo_t *info, void *context) {
-    WRITE_MSG("Mother: Received SIGRT: SIGMIN+%i, for PID: %d\n", signum - SIGRTMIN, info->si_pid);
 }
 
 int main(int argc, char *argv[]) {
@@ -124,4 +83,57 @@ int main(int argc, char *argv[]) {
 
     while (wait(NULL))
         if (errno == ECHILD) FAILURE_EXIT(2, "ERROR CHILD\n");
+}
+
+void intHandler(int signum, siginfo_t *info, void *context) {
+    WRITE_MSG("\rMother: Received SIGINT\n");
+
+    for (int i = 0; i < N; i++)
+        if (childrenArr[i] != -1) {
+            kill(childrenArr[i], SIGKILL);
+            waitpid(childrenArr[i], NULL, 0);
+        }
+
+    exit(0);
+}
+
+void usrHandler(int signum, siginfo_t *info, void *context) {
+    WRITE_MSG("Mother: Received SIGUSR1 form PID: %d\n", info->si_pid);
+
+    if (checkIfChildren(info->si_pid) == -1)return;
+
+    if (k >= K) {
+        WRITE_MSG("Mother: Sending SIGUSR1 to Child PID: %d\n", info->si_pid);
+        kill(info->si_pid, SIGUSR1);
+        waitpid(info->si_pid, NULL, 0);
+    } else {
+        awaitingArr[k++] = info->si_pid;
+        if (k >= K) {
+            for (int i = 0; i < K; i++) {
+                if (awaitingArr[i] > 0) {
+                    WRITE_MSG("Mother: Sending SIGUSR1 to Child PID: %d\n", awaitingArr[i]);
+                    kill(awaitingArr[i], SIGUSR1);
+                    waitpid(awaitingArr[i], NULL, 0);
+                }
+            }
+        }
+    }
+}
+
+void chldHandler(int signum, siginfo_t *info, void *context) {
+    if (info->si_code == CLD_EXITED) {
+        WRITE_MSG("Mother: Child %d has terminated, with exit status: %d\n", info->si_pid, info->si_status);
+    } else {
+        WRITE_MSG("Mother: Child %d has terminated by signal: %d\n", info->si_pid, info->si_status);
+    }
+    n--;
+    if (n == 0) {
+        WRITE_MSG("Mother: No more children, Terminating\n");
+        exit(0);
+    }
+    removeChild(info->si_status);
+}
+
+void rtHandler(int signum, siginfo_t *info, void *context) {
+    WRITE_MSG("Mother: Received SIGRT: SIGMIN+%i, for PID: %d\n", signum - SIGRTMIN, info->si_pid);
 }
