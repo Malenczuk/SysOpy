@@ -11,17 +11,50 @@
 #define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
 #define WRITE_MSG(format, ...) { char buffer[255]; sprintf(buffer, format, ##__VA_ARGS__); write(1, buffer, strlen(buffer));}
 
+void childHandler(int, siginfo_t *, void *);
+
+void motherHandler(int, siginfo_t *, void *);
+
+void childProcess();
+
+void motherProcess();
+
+volatile int L;
 volatile int TYPE;
-volatile int receivedByChild;
-volatile int receivedFromChild;
+volatile int sentToChild = 0;
+volatile int receivedByChild = 0;
+volatile int receivedFromChild = 0;
 volatile pid_t child;
+
+void printStats() {
+    printf("Signals sent: %d\n", sentToChild);
+    printf("Signals received from child: %d\n", receivedFromChild);
+}
+
+int main(int argc, char *argv[]) {
+
+    if (argc < 3) FAILURE_EXIT(1, "Wrong execution. Use ./main VAL_L VAL_TYPE\n");
+    L = (int) strtol(argv[1], '\0', 10);
+    TYPE = (int) strtol(argv[2], '\0', 10);
+
+    if (L < 1) FAILURE_EXIT(1, "Wrong L Argument\n")
+    if (TYPE < 1 || TYPE > 3) FAILURE_EXIT(1, "Wrong Type Argument\n")
+
+    child = fork();
+    if (!child) childProcess();
+    else if (child > 0) motherProcess();
+    else FAILURE_EXIT(2, "Error while Forking\n");
+
+    printStats();
+
+    return 0;
+}
 
 void childHandler(int signum, siginfo_t *info, void *context) {
     if (signum == SIGINT) {
         WRITE_MSG("Signals received by child: %d\n", receivedByChild);
-        exit(SIGINT);
+        exit((unsigned) receivedByChild);
     }
-
     if (info->si_pid != getppid()) return;
 
     if (TYPE == 1 || TYPE == 2) {
@@ -33,7 +66,7 @@ void childHandler(int signum, siginfo_t *info, void *context) {
             receivedByChild++;
             WRITE_MSG("Child: SIGUSR2 received Terminating\n")
             WRITE_MSG("Signals received by child: %d\n", receivedByChild);
-            exit(SIGUSR2);
+            exit((unsigned) receivedByChild);
         }
     } else if (TYPE == 3) {
         if (signum == SIGRTMIN) {
@@ -44,15 +77,18 @@ void childHandler(int signum, siginfo_t *info, void *context) {
             receivedByChild++;
             WRITE_MSG("Child: SIGRTMAX received Terminating\n")
             WRITE_MSG("Signals received by child: %d\n", receivedByChild);
-            exit(SIGRTMAX);
+            exit((unsigned) receivedByChild);
         }
     }
 }
 
+
 void motherHandler(int signum, siginfo_t *info, void *context) {
     if (signum == SIGINT) {
-        kill(child, SIGKILL);
-        return;
+        WRITE_MSG("Mother: Received SIGINT\n");
+        kill(child, SIGINT);
+        printStats();
+        exit(9);
     }
     if (info->si_pid != child) return;
 
@@ -64,7 +100,6 @@ void motherHandler(int signum, siginfo_t *info, void *context) {
         WRITE_MSG("Mother: Received SIGRTMIN from Child\n");
     }
 }
-
 
 void childProcess() {
     struct sigaction act;
@@ -79,11 +114,13 @@ void childProcess() {
     if (sigaction(SIGRTMAX, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMAX\n");
 
     while (1) {
-
+        sleep(1);
     }
 }
 
-void motherProcess(int L) {
+void motherProcess() {
+    sleep(1);
+
     struct sigaction act;
     sigemptyset(&act.sa_mask);
     act.sa_flags = SA_SIGINFO;
@@ -94,7 +131,7 @@ void motherProcess(int L) {
     if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
 
     if (TYPE == 1) {
-        for (int i = 0; i < L; i++) {
+        for (; sentToChild < L; sentToChild++) {
             WRITE_MSG("Mother: Sending SIGUSR1\n");
             kill(child, SIGUSR1);
         }
@@ -102,40 +139,26 @@ void motherProcess(int L) {
         kill(child, SIGUSR2);
     } else if (TYPE == 2) {
         union sigval val;
-        for (int i = 0; i < L; i++) {
+        for (; sentToChild < L; sentToChild++) {
             WRITE_MSG("Mother: Sending SIGUSR1\n");
             sigqueue(child, SIGUSR1, val);
         }
+        sentToChild++;
         WRITE_MSG("Mother: Sending SIGUSR2\n");
         sigqueue(child, SIGUSR2, val);
     } else if (TYPE == 3) {
-        for (int i = 0; i < L; i++) {
+        for (; sentToChild < L; sentToChild++) {
             WRITE_MSG("Mother: Sending SIGRTMIN\n");
             kill(child, SIGRTMIN);
         }
+        sentToChild++;
         WRITE_MSG("Mother: Sending SIGRTMAX\n");
         kill(child, SIGRTMAX);
     }
 
-    wait(NULL);
-}
-
-
-int main(int argc, char *argv[]) {
-    if (argc < 3) FAILURE_EXIT(1, "Wrong execution. Use ./main VAL_L VAL_TYPE\n");
-    int L = (int) strtol(argv[1], '\0', 10);
-    TYPE = (int) strtol(argv[2], '\0', 10);
-
-    if (L < 1) FAILURE_EXIT(1, "Wrong L Argument\n")
-    if (TYPE < 1 || TYPE > 3) FAILURE_EXIT(1, "Wrong Type Argument\n")
-
-    child = fork();
-    if (!child) {
-        printf("1\n");
-        childProcess();
-    }
-    else motherProcess(L);
-    printf("Signals sent: %d\n", L + 1);
-    printf("Signals received from child: %d\n", receivedFromChild);
-    return 0;
+    int status = 0;
+    waitpid(child, &status, 0);
+    if (WIFEXITED(status))
+        receivedByChild = WEXITSTATUS(status);
+    else FAILURE_EXIT(1, "Error with termination of Child!\n");
 }

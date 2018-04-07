@@ -1,10 +1,10 @@
 CC = gcc
-FLAGS = -std=c99 -Wall
+FLAGS = -std=gnu99 -Wall
 MAIN_SRC = main
 OPTIM ?= -O2
 
 all:
-	$(CC) -Wall $(MAIN_SRC).c -o $(MAIN_SRC)
+	$(CC) $(FLAGS) $(MAIN_SRC).c -o $(MAIN_SRC)
 
 clean:
 	rm $(MAIN_SRC)
