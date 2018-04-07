@@ -130,29 +130,18 @@ void motherProcess() {
     if (sigaction(SIGUSR1, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR1\n");
     if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
 
-    if (TYPE == 1) {
-        for (; sentToChild < L; sentToChild++) {
-            WRITE_MSG("Mother: Sending SIGUSR1\n");
-            kill(child, SIGUSR1);
-        }
-        WRITE_MSG("Mother: Sending SIGUSR2\n");
-        kill(child, SIGUSR2);
-    } else if (TYPE == 2) {
+    if (TYPE == 1 || TYPE == 2) {
         sigset_t mask;
         sigfillset(&mask);
         sigdelset(&mask, SIGUSR1);
         sigdelset(&mask, SIGINT);
-//        union sigval val;
         for (; sentToChild < L; sentToChild++) {
             WRITE_MSG("Mother: Sending SIGUSR1\n");
-//            sigqueue(child, SIGUSR1, val);
             kill(child, SIGUSR1);
-            sigsuspend(&mask);
+            if (TYPE == 2) sigsuspend(&mask);
         }
-        sentToChild++;
         WRITE_MSG("Mother: Sending SIGUSR2\n");
         kill(child, SIGUSR2);
-//        sigqueue(child, SIGUSR2, val);
     } else if (TYPE == 3) {
         for (; sentToChild < L; sentToChild++) {
             WRITE_MSG("Mother: Sending SIGRTMIN\n");
