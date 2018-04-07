@@ -52,6 +52,9 @@ int main(int argc, char *argv[]) {
 
 void childHandler(int signum, siginfo_t *info, void *context) {
     if (signum == SIGINT) {
+        sigset_t mask;
+        sigfillset(&mask);
+        sigprocmask(SIG_SETMASK, &mask, NULL);
         WRITE_MSG("Signals received by child: %d\n", receivedByChild);
         exit((unsigned) receivedByChild);
     }
@@ -86,7 +89,7 @@ void childHandler(int signum, siginfo_t *info, void *context) {
 void motherHandler(int signum, siginfo_t *info, void *context) {
     if (signum == SIGINT) {
         WRITE_MSG("Mother: Received SIGINT\n");
-        kill(child, SIGINT);
+        kill(child, SIGUSR2);
         printStats();
         exit(9);
     }
