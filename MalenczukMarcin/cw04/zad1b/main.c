@@ -3,6 +3,8 @@
 #include <zconf.h>
 #include <signal.h>
 
+#define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
+
 int waiting = 0;
 int noChild = 1;
 pid_t pid = 0;
@@ -12,12 +14,7 @@ void handleTSTP(int signum) {
         waiting = 0;
     else {
         printf("\rOczekuję na CTRL+Z - kontynuacja albo CTR+C - zakonczenie programu\n");
-        sigset_t mask;
-        sigfillset(&mask);
-        sigdelset(&mask, SIGTSTP);
-        sigdelset(&mask, SIGINT);
         waiting = 1;
-        sigsuspend(&mask);
     }
 }
 
@@ -41,8 +38,8 @@ int main() {
                 noChild = 0;
                 pid = fork();
                 if (!pid) {
-                    execl("./date.sh", "./date.sh", NULL);
-                    exit(0);
+                    execlp("./date.sh", "./date.sh", NULL);
+                    FAILURE_EXIT(1,"Error while exec.\n");
                 }
             }
         } else {
@@ -52,6 +49,4 @@ int main() {
             }
         }
     }
-
-    return 0;
 }

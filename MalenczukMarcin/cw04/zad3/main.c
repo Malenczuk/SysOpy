@@ -51,13 +51,6 @@ int main(int argc, char *argv[]) {
 }
 
 void childHandler(int signum, siginfo_t *info, void *context) {
-    if (signum == SIGINT) {
-        sigset_t mask;
-        sigfillset(&mask);
-        sigprocmask(SIG_SETMASK, &mask, NULL);
-        WRITE_MSG("Signals received by child: %d\n", receivedByChild);
-        exit((unsigned) receivedByChild);
-    }
     if (info->si_pid != getppid()) return;
 
     if (TYPE == 1 || TYPE == 2) {
@@ -110,11 +103,21 @@ void childProcess() {
     act.sa_flags = SA_SIGINFO;
     act.sa_sigaction = childHandler;
 
-    if (sigaction(SIGINT, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGINT\n");
-    if (sigaction(SIGUSR1, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR1\n");
-    if (sigaction(SIGUSR2, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR2\n");
-    if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
-    if (sigaction(SIGRTMAX, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMAX\n");
+    sigset_t mask;
+    sigfillset(&mask);
+    if (TYPE == 1 || TYPE == 2) {
+        sigdelset(&mask, SIGUSR1);
+        sigdelset(&mask, SIGUSR2);
+        if (sigaction(SIGUSR1, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR1\n");
+        if (sigaction(SIGUSR2, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR2\n");
+    }
+    if (TYPE == 3) {
+        sigdelset(&mask, SIGRTMIN);
+        sigdelset(&mask, SIGRTMAX);
+        if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
+        if (sigaction(SIGRTMAX, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMAX\n");
+    }
+    sigprocmask(SIG_SETMASK, &mask, NULL);
 
     while (1) {
         sleep(1);
@@ -130,8 +133,8 @@ void motherProcess() {
     act.sa_sigaction = motherHandler;
 
     if (sigaction(SIGINT, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGINT\n");
-    if (sigaction(SIGUSR1, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR1\n");
-    if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
+    if (TYPE == 1 || TYPE == 2) if (sigaction(SIGUSR1, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGUSR1\n");
+    if (TYPE == 3) if (sigaction(SIGRTMIN, &act, NULL) == -1) FAILURE_EXIT(1, "Can't catch SIGRTMIN\n");
 
     if (TYPE == 1 || TYPE == 2) {
         sigset_t mask;
