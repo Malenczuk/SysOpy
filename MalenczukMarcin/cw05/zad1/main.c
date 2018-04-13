@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
                 if (k < cmdNum - 1) {
                     close(pipes[k % 2][0]);
                     if (dup2(pipes[k % 2][1], 1) < 0) FAILURE_EXIT(3, "Couldnt set writing at number %d!\n", k);
-                    wait(NULL);
                 }
                 if (k != 0) {
                     close(pipes[(k + 1) % 2][1]);
