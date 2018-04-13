@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
                     close(pipes[(k + 1) % 2][1]);
                     if (dup2(pipes[(k + 1) % 2][0], 0) < 0) FAILURE_EXIT(3, "Couldnt set reading at number %d!\n", k);
                 }
-                if(red[k] > 0) execlp("/home/malen/AGH/IEiT/SysOpy/MalenczukMarcin/cw05/zad1/redirect", "/home/malen/AGH/IEiT/SysOpy/MalenczukMarcin/cw05/zad1/redirect", (red[k] == 1 ? ">" : ">>"), args[0], NULL);
+                if(red[k] > 0) execlp("./redirect", "./redirect", (red[k] == 1 ? ">" : ">>"), args[0], NULL);
                 else execvp(args[0], args);
                 FAILURE_EXIT(1, "ERROR EXECUTING CHILD PROCESS %d!\n", k);
             }
