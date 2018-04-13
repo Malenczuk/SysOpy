@@ -14,27 +14,6 @@
 #define LINE_MAX 256
 int pipes[2][2];
 
-char *
-strtok2(s, delim)
-        char *s;            /* string to search for tokens */
-        const char *delim;  /* delimiting characters */
-{
-    static char *lasts;
-    register int ch;
-
-    if (s == 0)
-        s = lasts;
-    do {
-        if ((ch = *s++) == '\0')
-            return 0;
-    } while (strchr(delim, ch));
-    --s;
-    lasts = s + strcspn(s, delim);
-    if (*lasts != 0)
-        *lasts++ = 0;
-    return s;
-}
-
 int main(int argc, char *argv[]) {
     if (argc < 2) FAILURE_EXIT(1, "To little Arguments.\n");
     FILE *file = fopen(argv[1], "r");
