@@ -21,20 +21,36 @@ int main(int argc, char *argv[]) {
 
     char r0[LINE_MAX], r1[LINE_MAX];
     char *args[ARGS_MAX], *cmds[CMDS_MAX];
+    int red[CMDS_MAX];
+    for (int i = 0; i < CMDS_MAX; i++) red[i] = 0;
     int cmdNum = 0, argNum = 0, lineNum = 0;
+    char *savepCMD, *savepRED, *savepARG;
 
     while (fgets(r0, LINE_MAX, file)) {
         lineNum++;
         strcpy(r1, r0);
         cmdNum = 0;
-        while ((cmds[cmdNum] = strtok(cmdNum == 0 ? r1 : NULL, "|\n")) != NULL)
+        while ((cmds[cmdNum] = strtok_r(cmdNum == 0 ? r1 : NULL, "|\n", &savepCMD)) != NULL){
+            char *x;
+            if((strstr(cmds[cmdNum], ">")) != 0) {
+                int append = (x = strstr(cmds[cmdNum], ">")) ? x == strstr(cmds[cmdNum], ">>") ? 2 : 1 : 0;
+                cmds[cmdNum] = strtok_r(cmds[cmdNum], ">", &savepRED);
+                cmdNum++;
+                while((cmds[cmdNum] = strtok_r(NULL, ">", &savepRED)) != NULL) {
+                    red[cmdNum] = append;
+                    append = (x = strstr(cmds[cmdNum], ">")) ? x == strstr(cmds[cmdNum], ">>") ? 2 : 1 : 0;
+                    cmdNum++;
+                }
+                cmdNum--;
+            }
             if (++cmdNum >= CMDS_MAX) FAILURE_EXIT(1, "Line %d exceeds maximum number (%d) of pipes", lineNum, CMDS_MAX)
+        }
         if (!cmdNum) continue;
 
         int k;
         for (k = 0; k < cmdNum; k++) {
             argNum = 0;
-            while ((args[argNum] = strtok(argNum == 0 ? cmds[k] : NULL, " \t\n")) != NULL)
+            while ((args[argNum] = strtok_r(argNum == 0 ? cmds[k] : NULL, " \t\n>", &savepARG)) != NULL)
                 if (++argNum >= ARGS_MAX) FAILURE_EXIT(1, "Command %d exceeds maximum number (%d) of args", k, ARGS_MAX)
             if (!argNum) continue;
 
@@ -57,7 +73,8 @@ int main(int argc, char *argv[]) {
                     close(pipes[(k + 1) % 2][1]);
                     if (dup2(pipes[(k + 1) % 2][0], 0) < 0) FAILURE_EXIT(3, "Couldnt set reading at number %d!\n", k);
                 }
-                execvp(args[0], args);
+                if(red[k] > 0) execlp("./redirect", "./redirect", (red[k] == 1 ? ">" : ">>"), args[0], NULL);
+                else execvp(args[0], args);
                 FAILURE_EXIT(1, "ERROR EXECUTING CHILD PROCESS %d!\n", k);
             }
         }
