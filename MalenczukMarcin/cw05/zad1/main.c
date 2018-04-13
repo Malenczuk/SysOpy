@@ -14,6 +14,27 @@
 #define LINE_MAX 256
 int pipes[2][2];
 
+char *
+strtok2(s, delim)
+        char *s;            /* string to search for tokens */
+        const char *delim;  /* delimiting characters */
+{
+    static char *lasts;
+    register int ch;
+
+    if (s == 0)
+        s = lasts;
+    do {
+        if ((ch = *s++) == '\0')
+            return 0;
+    } while (strchr(delim, ch));
+    --s;
+    lasts = s + strcspn(s, delim);
+    if (*lasts != 0)
+        *lasts++ = 0;
+    return s;
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 2) FAILURE_EXIT(1, "To little Arguments.\n");
     FILE *file = fopen(argv[1], "r");
@@ -31,14 +52,13 @@ int main(int argc, char *argv[]) {
         strcpy(r1, r0);
         cmdNum = 0;
         while ((cmds[cmdNum] = strtok_r(cmdNum == 0 ? r1 : NULL, "|\n", &savepCMD)) != NULL){
-            char *x;
             if((strstr(cmds[cmdNum], ">")) != 0) {
-                int append = (x = strstr(cmds[cmdNum], ">")) ? x == strstr(cmds[cmdNum], ">>") ? 2 : 1 : 0;
+                int append = strstr(cmds[cmdNum], ">") == strstr(cmds[cmdNum], ">>") ? 2 : 1;
                 cmds[cmdNum] = strtok_r(cmds[cmdNum], ">", &savepRED);
                 cmdNum++;
                 while((cmds[cmdNum] = strtok_r(NULL, ">", &savepRED)) != NULL) {
                     red[cmdNum] = append;
-                    append = (x = strstr(cmds[cmdNum], ">")) ? x == strstr(cmds[cmdNum], ">>") ? 2 : 1 : 0;
+                    append = strstr(cmds[cmdNum], ">") == strstr(cmds[cmdNum], ">>") ? 2 : 1;
                     cmdNum++;
                 }
                 cmdNum--;
@@ -46,7 +66,8 @@ int main(int argc, char *argv[]) {
             if (++cmdNum >= CMDS_MAX) FAILURE_EXIT(1, "Line %d exceeds maximum number (%d) of pipes", lineNum, CMDS_MAX)
         }
         if (!cmdNum) continue;
-
+        for(int i = 0; i < cmdNum; i++) printf("%d %s, ", red[i] ,cmds[i]);
+        printf("\n");
         int k;
         for (k = 0; k < cmdNum; k++) {
             argNum = 0;
