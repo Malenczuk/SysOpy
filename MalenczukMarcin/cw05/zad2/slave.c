@@ -15,19 +15,14 @@ int main(int argc, char *argv[]) {
     FILE *date;
 
     if (argc < 3) {
-        kill(getppid(), SIGRTMIN);
         FAILURE_EXIT(1, "To little Arguments.\n");
     }
     int N = (int) strtol(argv[2], '\0', 10);
 
     int fifo = open(argv[1], O_WRONLY);
     if (fifo < 0) {
-        kill(getppid(), SIGRTMIN);
         FAILURE_EXIT(1, "Error opening FIFO\n")
     }
-
-
-    kill(getppid(), SIGRTMIN);
 
     printf("Slave %d: %d\n", N, getpid());
 
