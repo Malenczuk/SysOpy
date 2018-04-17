@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,6 +22,8 @@ int main(int argc, char *argv[]) {
         FAILURE_EXIT(1, "Error creating Master\n");
     }
 
+    sleep(1);
+    
     for (int i = 0; i < N; i++) {
         pid_t slave = fork();
         if (slave < 0) FAILURE_EXIT(1, "Error forking Slave process");
