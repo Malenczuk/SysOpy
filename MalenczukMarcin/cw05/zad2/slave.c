@@ -14,15 +14,12 @@ int main(int argc, char *argv[]) {
     srand((unsigned int) (time(NULL) * getpid()));
     FILE *date;
 
-    if (argc < 3) {
-        FAILURE_EXIT(1, "To little Arguments.\n");
-    }
+    if (argc < 3) FAILURE_EXIT(1, "To little Arguments.\n");
+
     int N = (int) strtol(argv[2], '\0', 10);
 
     int fifo = open(argv[1], O_WRONLY);
-    if (fifo < 0) {
-        FAILURE_EXIT(1, "Error opening FIFO\n")
-    }
+    if (fifo < 0) FAILURE_EXIT(1, "Error opening FIFO\n");
 
     printf("Slave %d: %d\n", N, getpid());
 

@@ -9,26 +9,21 @@
 #define BUFF_SIZE 256
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        FAILURE_EXIT(1, "Master: To little Arguments.\n");
-    }
+    if (argc < 2) FAILURE_EXIT(1, "Master: To little Arguments.\n");
 
-    if (mkfifo(argv[1], S_IRUSR | S_IWUSR) == -1) {
-        FAILURE_EXIT(1, "Master: Error creating FIFO\n");
-    }
+    if (mkfifo(argv[1], S_IRUSR | S_IWUSR) == -1) FAILURE_EXIT(1, "Master: Error creating FIFO\n");
+
     FILE *fifo = fopen(argv[1], "r");
-    if (!fifo) {
-        FAILURE_EXIT(1, "Master: Error opening FIFO\n")
-    }
+    if (!fifo) FAILURE_EXIT(1, "Master: Error opening FIFO\n");
 
     char buffer[BUFF_SIZE];
-    while (fgets(buffer, BUFF_SIZE, fifo) != NULL) {
+    while (fgets(buffer, BUFF_SIZE, fifo) > 0) {
         write(1, buffer, strlen(buffer));
     }
     printf("Master: Ended reading FIFO\n");
+
     fclose(fifo);
-    if (remove(argv[1])) {
-        FAILURE_EXIT(1, "Master: Error deleting FIFO\n");
-    }
+    if (remove(argv[1])) FAILURE_EXIT(1, "Master: Error deleting FIFO\n");
+
     return 0;
 }

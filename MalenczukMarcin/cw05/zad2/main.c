@@ -10,7 +10,6 @@
 volatile pid_t masterPID;
 
 int main(int argc, char *argv[]) {
-
     if (argc < 4) FAILURE_EXIT(1, "To little Arguments.\n");
     int N = (int) strtol(argv[3], '\0', 10);
 
@@ -21,8 +20,6 @@ int main(int argc, char *argv[]) {
         execlp("./master", "./master", argv[1], NULL);
         FAILURE_EXIT(1, "Error creating Master\n");
     }
-
-    sleep(1);
 
     for (int i = 0; i < N; i++) {
         pid_t slave = fork();
@@ -35,7 +32,6 @@ int main(int argc, char *argv[]) {
 
     while (wait(NULL))
         if (errno == ECHILD) {
-            printf("\n");
             break;
         }
 
