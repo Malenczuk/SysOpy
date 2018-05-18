@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -O2 -std=gnu99 -static -Wall -Wextra -Isrc -rdynamic -fomit-frame-pointer
+CFLAGS = -g -O2 -std=gnu99 -Wall
 
 all: clean client server
 

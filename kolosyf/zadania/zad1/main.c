@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 void sighandler(int signo, siginfo_t *siginfo, void *cont){
-    printf("Child: %d\n", siginfo->si_value.sival_int);
+    printf("Child: %d", siginfo->si_value.sival_int);
 }
 
 int main(int argc, char* argv[]) {
@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
     sigset_t mask;
     sigfillset(&mask);
     sigdelset(&mask, SIGUSR1);
+    //action.sa_mask = mask;
 
     int child = fork();
     if(child == 0) {

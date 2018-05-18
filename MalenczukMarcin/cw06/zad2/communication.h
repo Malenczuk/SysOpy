@@ -17,6 +17,6 @@ typedef struct Msg{
     char cont[MAX_CONT_SIZE];
 } Msg;
 
-const char serverPath[] = "/server";
+const char serverPath[] = "/aRandomStringJustToMakeSureThereIsNoQueueWithThatExactName";
 
 #endif
