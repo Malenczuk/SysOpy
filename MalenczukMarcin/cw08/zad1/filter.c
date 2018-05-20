@@ -20,7 +20,7 @@ unsigned char **I; //picture
 float **K; //filter
 unsigned char **J; //picture with applied filter
 
-int N, M, C;
+int H, W, C, M;
 int threads;
 
 double time_diff(clock_t start, clock_t end){
@@ -34,20 +34,20 @@ void fprintf_time(FILE *file, clock_t rStartTime, struct tms tmsStartTime, clock
 }
 
 void* routine(void *args) {
-    int c2 = (int) ceil(C/2);
+    int c2 = (int) floor(C/2);
     int thread_number = *(int *) args;
     double s;
-    int start_x = N * thread_number / threads;
-    int end_x = N * (thread_number + 1) / threads;
-    for (int x = start_x; x < end_x; ++x) {
-        for (int y = 0; y < M; ++y) {
+    int start_y = H * thread_number / threads;
+    int end_y = H * (thread_number + 1) / threads;
+    for (int y = start_y; y < end_y; ++y) {
+        for (int x = 0; x < W; ++x) {
             s = 0;
 
-            for (int i = 0; i < C; ++i)
-                for (int j = 0; j < C; ++j) {
-                    int i_y = min((M - 1), max(0, y - c2 + j));
-                    int i_x = min((N - 1), max(0, x - c2 + i));
-                    s += I[i_y][i_x] * K[j][i];
+            for (int h = 0; h < C; ++h)
+                for (int w = 0; w < C; ++w) {
+                    int i_y = min((H - 1), max(0, y - c2 + h));
+                    int i_x = min((W - 1), max(0, x - c2 + w));
+                    s += I[i_y][i_x] * K[h][w];
                 }
             J[y][x] = (unsigned char) round(s);
         }
@@ -59,48 +59,41 @@ void* routine(void *args) {
 void load_picture(char *file_path) {
     FILE *file;
     if ((file = fopen(file_path, "r")) == NULL) FAILURE_EXIT(2, "Opening input file failed");
-    int val;
     fscanf(file, "P2\n");
-    fscanf(file, "%d%*[ \n]", &N);
-    fscanf(file, "%d%*[ \n]", &M);
-    fscanf(file, "%d%*[ \n]", &val);
-    I = malloc(M * sizeof(unsigned char*));
-    for(int i = 0; i < M; ++i)
-        I[i] = malloc(N * sizeof(unsigned char));
+    fscanf(file, "%d", &W);
+    fscanf(file, "%d", &H);
+    fscanf(file, "%d", &M);
+    I = malloc(H * sizeof(unsigned char*));
+    for(int i = 0; i < H; ++i)
+        I[i] = malloc(W * sizeof(unsigned char));
 
-    for (int x = 0; x < N; ++x) {
-        for (int y = 0; y < M; ++y) {
-            fscanf(file, "%d%*[ \n]", &val);
-            I[y][x] = (unsigned char) val;
-        }
-    }
+    for (int y = 0; y < H; ++y)
+        for (int x = 0; x < W; ++x)
+            fscanf(file, "%d", &I[y][x]);
     fclose(file);
 }
 
 void load_filter(char *file_path) {
     FILE *file;
     if ((file = fopen(file_path, "r")) == NULL) FAILURE_EXIT(2, "Opening filter file failed");
-    fscanf(file, "%d%*[ \n]", &C);
+    fscanf(file, "%d", &C);
     K = malloc(C * sizeof(float*));
     for(int i = 0; i < C; ++i)
         K[i] = malloc(C * sizeof(float));
 
-    float fval;
-    for (int x = 0; x < C; ++x) {
-        for (int y = 0; y < C; ++y) {
-            fscanf(file, "%f%*[ \n]", &fval);
-            K[y][x] = fval;
-        }
-    }
+    for (int y = 0; y < C; ++y)
+        for (int x = 0; x < C; ++x)
+            fscanf(file, "%f", &K[y][x]);
+
     fclose(file);
 }
 
 void save_result(char *file_path) {
     FILE *file;
     if ((file = fopen(file_path, "w")) == NULL) FAILURE_EXIT(2, "Opening output file failed");
-    fprintf(file, "P2\n%d %d\n255\n", N, M);
-    for (int x = 0; x < N; ++x) {
-        for (int y = 0; y < M; ++y)
+    fprintf(file, "P2\n%d %d\n%d\n", W, H, M);
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x)
             fprintf(file, "%d ", J[y][x]);
         fprintf(file, "\n");
     }
@@ -111,7 +104,7 @@ void save_times(clock_t r_time[2], struct tms tms_time[2]){
     FILE *file;
     if ((file = fopen("Times.txt", "a")) == NULL) FAILURE_EXIT(2, "Opening times file failed");
     fprintf(file, "Number of Threads: %d\n", threads);
-    fprintf(file, "Picture size: %dx%d\n", N, M);
+    fprintf(file, "Picture size: %dx%d\n", W, H);
     fprintf(file, "Filter size: %dx%d\n", C,C);
     fprintf_time(file, r_time[0], tms_time[0], r_time[1], tms_time[1]);
     fprintf(file, "\n\n");
@@ -130,10 +123,9 @@ int main(int argc, char *argv[]) {
     load_picture(picture_file_path);
     load_filter(filter_file_path);
 
-    J = malloc(M * sizeof(unsigned char*));
-    for(int i = 0; i < M; ++i)
-        J[i] = malloc(N * sizeof(unsigned char));
-
+    J = malloc(H * sizeof(unsigned char*));
+    for(int i = 0; i < H; ++i)
+        J[i] = malloc(W * sizeof(unsigned char));
 
     pthread_t* thread = malloc(threads * sizeof(pthread_t));
 
