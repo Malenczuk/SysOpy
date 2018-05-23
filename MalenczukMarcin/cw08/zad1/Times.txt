@@ -40,3 +40,183 @@ Filter size: 25x25
 Real:   0.12 s   User:   0.44 s   System: 0.00 s
 
 
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   1.83 s   User:   1.83 s   System: 0.00 s
+
+
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   1.84 s   User:   1.84 s   System: 0.00 s
+
+
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   1.79 s   User:   1.80 s   System: 0.00 s
+
+
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   2.05 s   User:   2.05 s   System: 0.00 s
+
+
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   1.94 s   User:   1.94 s   System: 0.00 s
+
+
+Number of Threads: 1
+Picture size: 640x480
+Filter size: 25x25
+Real:   1.83 s   User:   1.82 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 640x480
+Filter size: 25x25
+Real:   0.45 s   User:   3.53 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   36.58 s   User:   288.81 s   System: 0.04 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   37.34 s   User:   287.27 s   System: 0.07 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   6.42 s   User:   49.83 s   System: 0.01 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   6.37 s   User:   49.76 s   System: 0.01 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.14 s   User:   1.01 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.14 s   User:   1.02 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.57 s   User:   4.45 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.14 s   User:   1.02 s   System: 0.01 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.14 s   User:   1.01 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.34 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.29 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   6.51 s   User:   50.66 s   System: 0.01 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   6.38 s   User:   50.35 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.33 s   System: 0.01 s
+
+
+Number of Threads: 1
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   23.05 s   User:   23.05 s   System: 0.00 s
+
+
+Number of Threads: 16
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   6.46 s   User:   49.91 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   7.26 s   User:   56.92 s   System: 0.01 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.35 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.36 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.35 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 1x1
+Real:   0.05 s   User:   0.35 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 3x3
+Real:   0.16 s   User:   1.16 s   System: 0.00 s
+
+
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   7.20 s   User:   56.62 s   System: 0.00 s
+
+
