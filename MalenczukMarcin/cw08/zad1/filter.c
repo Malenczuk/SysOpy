@@ -121,6 +121,7 @@ void save_result(char *file_path) {
 void save_times(clock_t r_time[2], struct tms tms_time[2]) {
     FILE *file;
     if ((file = fopen("Times.txt", "a")) == NULL) FAILURE_EXIT(2, "Opening times file failed");
+    fprintf(file, "P%d\n", P == 1 ? 2 : 3);
     fprintf(file, "Number of Threads: %d\n", threads);
     fprintf(file, "Picture size: %dx%d\n", W, H);
     fprintf(file, "Filter size: %dx%d\n", C, C);

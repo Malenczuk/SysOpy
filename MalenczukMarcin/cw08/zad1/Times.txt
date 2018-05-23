@@ -220,3 +220,10 @@ Filter size: 25x25
 Real:   7.20 s   User:   56.62 s   System: 0.00 s
 
 
+P3
+Number of Threads: 8
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   7.60 s   User:   57.65 s   System: 0.03 s
+
+
