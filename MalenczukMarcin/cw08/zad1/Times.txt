@@ -245,6 +245,17 @@ P3
 Number of Threads: 1
 Picture size: 3840x2160
 Filter size: 25x25
-Real:   29.31 s   User:   29.30 s   System: 0.00 s
+Real:   29.31 s   User:   29.30 s   System: 0.00 sP3
+Number of Threads: 4
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   7.61 s   User:   30.05 s   System: 0.00 s
+
+
+P3
+Number of Threads: 16
+Picture size: 3840x2160
+Filter size: 25x25
+Real:   7.16 s   User:   56.70 s   System: 0.00 s
 
 
