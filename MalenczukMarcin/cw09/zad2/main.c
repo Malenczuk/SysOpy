@@ -131,7 +131,7 @@ void *consumer(void *pVoid) {
             fprintf(stderr, "Consumer[%ld]: Index(%d), %s",  pthread_self(), index, line);
         }
         free(line);
-        usleep(1);
+        usleep(10);
     }
 }
 

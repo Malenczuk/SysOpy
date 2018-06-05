@@ -92,6 +92,7 @@ void *producer(void *pVoid) {
 
 
         pthread_mutex_lock(&b_mutex[index]);
+        pthread_mutex_unlock(&b_mutex[N]);
 
         buffer[index] = malloc((strlen(line) + 1) * sizeof(char));
         strcpy(buffer[index], line);
@@ -99,7 +100,6 @@ void *producer(void *pVoid) {
 
         pthread_cond_broadcast(&r_cond);
         pthread_mutex_unlock(&b_mutex[index]);
-        pthread_mutex_unlock(&b_mutex[N]);
     }
     if(verbose) fprintf(stderr, "Producer[%ld]: Finished\n", pthread_self());
     return NULL;
@@ -125,6 +125,7 @@ void *consumer(void *pVoid) {
         consumption_index = (consumption_index + 1) % N;
 
         pthread_mutex_lock(&b_mutex[index]);
+        pthread_mutex_unlock(&b_mutex[N + 1]);
 
         line = buffer[index];
         buffer[index] = NULL;
@@ -132,7 +133,6 @@ void *consumer(void *pVoid) {
 
         pthread_cond_broadcast(&w_cond);
         pthread_mutex_unlock(&b_mutex[index]);
-        pthread_mutex_unlock(&b_mutex[N + 1]);
 
         if(length_search((int) strlen(line))){
             if(verbose) fprintf(stderr, "Consumer[%ld]: found line with length %d %c %d\n",
@@ -140,7 +140,7 @@ void *consumer(void *pVoid) {
             fprintf(stderr, "Consumer[%ld]: Index(%d), %s",  pthread_self(), index, line);
         }
         free(line);
-        usleep(1);
+        usleep(10);
     }
 }
 
