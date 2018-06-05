@@ -92,7 +92,6 @@ void *producer(void *pVoid) {
 
 
         pthread_mutex_lock(&b_mutex[index]);
-        pthread_mutex_unlock(&b_mutex[N]);
 
         buffer[index] = malloc((strlen(line) + 1) * sizeof(char));
         strcpy(buffer[index], line);
@@ -100,6 +99,7 @@ void *producer(void *pVoid) {
 
         pthread_cond_broadcast(&r_cond);
         pthread_mutex_unlock(&b_mutex[index]);
+        pthread_mutex_unlock(&b_mutex[N]);
     }
     if(verbose) fprintf(stderr, "Producer[%ld]: Finished\n", pthread_self());
     return NULL;

@@ -116,13 +116,13 @@ void *consumer(void *pVoid) {
         consumption_index = (consumption_index + 1) % N;
 
         sem_wait(&b_sem[index]);
-        sem_post(&b_sem[N + 1]);
 
         line = buffer[index];
         buffer[index] = NULL;
         if(verbose) fprintf(stderr, "Consumer[%ld]: taking line from buffer at index (%d)\n",  pthread_self(), index);
 
         sem_post(&b_sem[N+2]);
+        sem_post(&b_sem[N + 1]);
         sem_post(&b_sem[index]);
 
         if(length_search((int) strlen(line))){
@@ -131,7 +131,6 @@ void *consumer(void *pVoid) {
             fprintf(stderr, "Consumer[%ld]: Index(%d), %s",  pthread_self(), index, line);
         }
         free(line);
-        usleep(10);
     }
 }
 
