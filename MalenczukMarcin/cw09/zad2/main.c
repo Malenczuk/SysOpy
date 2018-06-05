@@ -3,15 +3,14 @@
 #include <unistd.h>
 #include <limits.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <string.h>
 #include <signal.h>
 
 #define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
 
 char **buffer;
-pthread_mutex_t *b_mutex;
-pthread_cond_t w_cond;
-pthread_cond_t r_cond;
+sem_t *b_sem;
 int P, K, N, L, nk, search, verbose;
 FILE *file;
 char file_name[FILENAME_MAX];
@@ -46,12 +45,10 @@ void __init__() {
 
     buffer = calloc((size_t) N, sizeof(char *));
 
-    b_mutex = malloc((N + 2) * sizeof(pthread_mutex_t));
+    b_sem = malloc((N + 3) * sizeof(sem_t));
     for (int i = 0; i < N + 2; ++i)
-        pthread_mutex_init(&b_mutex[i], NULL);
-
-    pthread_cond_init(&w_cond, NULL);
-    pthread_cond_init(&r_cond, NULL);
+        sem_init(&b_sem[i], 0, 1);
+    sem_init(&b_sem[N+2], 0, (unsigned int) N);
 
     p_threads = malloc(P * sizeof(pthread_t));
     k_threads = malloc(K * sizeof(pthread_t));
@@ -64,12 +61,9 @@ void __del__() {
         if (buffer[i]) free(buffer[i]);
     free(buffer);
 
-    for (int j = 0; j < N + 2; ++j)
-        pthread_mutex_destroy(&b_mutex[j]);
-    free(b_mutex);
-
-    pthread_cond_destroy(&w_cond);
-    pthread_cond_destroy(&r_cond);
+    for (int j = 0; j < N + 4; ++j)
+        sem_destroy(&b_sem[j]);
+    free(b_sem);
 }
 
 int length_search(int line_length){
@@ -81,25 +75,23 @@ void *producer(void *pVoid) {
     char line[LINE_MAX];
     while (fgets(line, LINE_MAX, file) != NULL) {
         if(verbose) fprintf(stderr, "Producer[%ld]: taking file line\n", pthread_self());
-        pthread_mutex_lock(&b_mutex[N]);
+        sem_wait(&b_sem[N]);
 
-        while (buffer[production_index] != NULL)
-            pthread_cond_wait(&w_cond, &b_mutex[N]);
+        sem_wait(&b_sem[N+2]);
 
         index = production_index;
         if(verbose) fprintf(stderr, "Producer[%ld]: taking buffer index (%d)\n",  pthread_self(), index);
         production_index = (production_index + 1) % N;
 
 
-        pthread_mutex_lock(&b_mutex[index]);
+        sem_wait(&b_sem[index]);
+        sem_post(&b_sem[N]);
 
         buffer[index] = malloc((strlen(line) + 1) * sizeof(char));
         strcpy(buffer[index], line);
         if(verbose) fprintf(stderr, "Producer[%ld]: line copied to buffer at index (%d)\n",  pthread_self(), index);
 
-        pthread_cond_broadcast(&r_cond);
-        pthread_mutex_unlock(&b_mutex[index]);
-        pthread_mutex_unlock(&b_mutex[N]);
+        sem_post(&b_sem[index]);
     }
     if(verbose) fprintf(stderr, "Producer[%ld]: Finished\n", pthread_self());
     return NULL;
@@ -109,34 +101,33 @@ void *consumer(void *pVoid) {
     char *line;
     int index;
     while (1) {
-        pthread_mutex_lock(&b_mutex[N + 1]);
-
+        sem_wait(&b_sem[N+1]);
         while (buffer[consumption_index] == NULL) {
-            if (finished) {
-                pthread_mutex_unlock(&b_mutex[N + 1]);
+            sem_post(&b_sem[N+1]);
+            if(finished){
                 if(verbose) fprintf(stderr, "Consumer[%ld]: Finished \n",  pthread_self());
                 return NULL;
             }
-            pthread_cond_wait(&r_cond, &b_mutex[N + 1]);
+            sem_wait(&b_sem[N+1]);
         }
 
         index = consumption_index;
         if(verbose) fprintf(stderr, "Consumer[%ld]: taking buffer index (%d)\n",  pthread_self(), index);
         consumption_index = (consumption_index + 1) % N;
 
-        pthread_mutex_lock(&b_mutex[index]);
+        sem_wait(&b_sem[index]);
+        sem_post(&b_sem[N + 1]);
 
         line = buffer[index];
         buffer[index] = NULL;
         if(verbose) fprintf(stderr, "Consumer[%ld]: taking line from buffer at index (%d)\n",  pthread_self(), index);
 
-        pthread_cond_broadcast(&w_cond);
-        pthread_mutex_unlock(&b_mutex[index]);
-        pthread_mutex_unlock(&b_mutex[N + 1]);
+        sem_post(&b_sem[N+2]);
+        sem_post(&b_sem[index]);
 
         if(length_search((int) strlen(line))){
             if(verbose) fprintf(stderr, "Consumer[%ld]: found line with length %d %c %d\n",
-                                pthread_self(), (int) strlen(line), search == 1 ? '>' : search == -1 ? '<' : '=', L);
+                    pthread_self(), (int) strlen(line), search == 1 ? '>' : search == -1 ? '<' : '=', L);
             fprintf(stderr, "Consumer[%ld]: Index(%d), %s",  pthread_self(), index, line);
         }
         free(line);
@@ -156,7 +147,6 @@ void join_threads(){
     for (int p = 0; p < P; ++p)
         pthread_join(p_threads[p], NULL);
     finished = 1;
-    pthread_cond_broadcast(&r_cond);
     for (int k = 0; k < K; ++k)
         pthread_join(k_threads[k], NULL);
 }
