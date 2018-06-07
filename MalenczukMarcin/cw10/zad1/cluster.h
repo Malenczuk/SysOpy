@@ -35,7 +35,8 @@ typedef enum message_type {
 } message_type;
 
 typedef enum connect_type {
-    LOCAL, WEB
+    LOCAL,
+    WEB
 } connect_type;
 
 #endif //ZAD1_CLUSTER_H

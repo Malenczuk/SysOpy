@@ -30,21 +30,21 @@ void __init__(char *, char *);
 
 void __del__();
 
-void register_client(char *, int);
-
-void unregister_client(char *);
-
 void *ping_routine(void *);
-
-void remove_client(int);
-
-void remove_socket(int);
 
 void *command_routine(void *);
 
 void handle_connection(int);
 
 void handle_message(int);
+
+void register_client(char *, int);
+
+void unregister_client(char *);
+
+void remove_client(int);
+
+void remove_socket(int);
 
 int web_socket;
 int local_socket;
@@ -73,6 +73,62 @@ int main(int argc, char **argv) {
             handle_connection(-event.data.fd);
         else
             handle_message(event.data.fd);
+    }
+}
+
+void *ping_routine(void *arg) {
+    uint8_t message_type = PING;
+    while (1) {
+        pthread_mutex_lock(&clients_mutex);
+        for (int i = 0; i < cn; ++i) {
+            if (clients[i].un_active != 0) {
+                printf("Client \"%s\" do not respond. Removing from registered clients\n", clients[i].name);
+                remove_client(i--);
+            } else {
+                if (write(clients[i].fd, &message_type, 1) != 1)
+                FAILURE_EXIT(1, "\nError : Could not PING client \"%s\"\n", clients[i].name);
+                clients[i].un_active++;
+            }
+        }
+        pthread_mutex_unlock(&clients_mutex);
+        sleep(5);
+    }
+}
+
+void *command_routine(void *arg) {
+    srand((unsigned int) time(NULL));
+    operation_t msg;
+    uint8_t message_type = REQUEST;
+    int error = 0;
+    char buffer[256];
+    while (1) {
+        printf("Enter command: \n");
+        fgets(buffer, 256, stdin);
+        if (sscanf(buffer, "%lf %c %lf", &msg.arg1, &msg.op, &msg.arg2) != 3) {
+            printf("Wrong command format\n");
+            continue;
+        }
+        if (msg.op != '+' && msg.op != '-' && msg.op != '*' && msg.op != '/') {
+            printf("Wrong operator (%c)\n", msg.op);
+            continue;
+        }
+        msg.op_num = ++op_num;
+        pthread_mutex_lock(&clients_mutex);
+        if(cn == 0){
+            printf("No Clients connected to server\n");
+            continue;
+        }
+        error = 0;
+        int i = rand() % cn;
+        if (write(clients[i].fd, &message_type, 1) != 1) error = 1;
+        if (write(clients[i].fd, &msg, sizeof(operation_t)) != sizeof(operation_t)) error = 1;
+        if(error == 0)
+            printf("Command %d: %lf %c %lf Has been sent to client \"%s\"\n",
+                   msg.op_num, msg.arg1, msg.op, msg.arg2, clients[i].name);
+        else
+            printf("\nError : Could not send request to client \"%s\"\n", clients[i].name);
+        pthread_mutex_unlock(&clients_mutex);
+
     }
 }
 
@@ -172,25 +228,6 @@ void unregister_client(char *client_name){
     pthread_mutex_unlock(&clients_mutex);
 }
 
-void *ping_routine(void *arg) {
-    uint8_t message_type = PING;
-    while (1) {
-        pthread_mutex_lock(&clients_mutex);
-        for (int i = 0; i < cn; ++i) {
-            if (clients[i].un_active != 0) {
-                printf("Client \"%s\" do not respond. Removing from registered clients\n", clients[i].name);
-                remove_client(i--);
-            } else {
-                if (write(clients[i].fd, &message_type, 1) != 1)
-                    FAILURE_EXIT(1, "\nError : Could not PING client \"%s\"\n", clients[i].name);
-                clients[i].un_active++;
-            }
-        }
-        pthread_mutex_unlock(&clients_mutex);
-        sleep(5);
-    }
-}
-
 void remove_client(int i) {
     remove_socket(clients[i].fd);
 
@@ -209,43 +246,6 @@ void remove_socket(int socket){
     if (shutdown(socket, SHUT_RDWR) == -1) FAILURE_EXIT(1, "\nError : Could not shutdown client's socket\n");
 
     if (close(socket) == -1) FAILURE_EXIT(1, "\nError : Could not close client's socket\n");
-}
-
-void *command_routine(void *arg) {
-    srand((unsigned int) time(NULL));
-    operation_t msg;
-    uint8_t message_type = REQUEST;
-    int error = 0;
-    char buffer[256];
-    while (1) {
-        printf("Enter command: \n");
-        fgets(buffer, 256, stdin);
-        if (sscanf(buffer, "%lf %c %lf", &msg.arg1, &msg.op, &msg.arg2) != 3) {
-            printf("Wrong command format\n");
-            continue;
-        }
-        if (msg.op != '+' && msg.op != '-' && msg.op != '*' && msg.op != '/') {
-            printf("Wrong operator (%c)\n", msg.op);
-            continue;
-        }
-        msg.op_num = ++op_num;
-        pthread_mutex_lock(&clients_mutex);
-        if(cn == 0){
-            printf("No Clients connected to server\n");
-            continue;
-        }
-        error = 0;
-        int i = rand() % cn;
-        if (write(clients[i].fd, &message_type, 1) != 1) error = 1;
-        if (write(clients[i].fd, &msg, sizeof(msg)) != sizeof(msg)) error = 1;
-        if(error == 0)
-            printf("Command %d: %lf %c %lf Has been sent to client \"%s\"\n",
-                    msg.op_num, msg.arg1, msg.op, msg.arg2, clients[i].name);
-        else
-            printf("\nError : Could not send request to client \"%s\"\n", clients[i].name);
-        pthread_mutex_unlock(&clients_mutex);
-
-    }
 }
 
 void sigHandler(int signo) {
