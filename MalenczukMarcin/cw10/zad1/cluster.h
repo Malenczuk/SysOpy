@@ -6,20 +6,20 @@
 
 typedef struct result_t {
     int op_num;
-    int value;
+    double value;
 } result_t;
 
 typedef struct operation_t {
     int op_num;
     char op;
-    int arg1;
-    int arg2;
+    double arg1;
+    double arg2;
 } operation_t;
 
 typedef struct Client {
     int fd;
     char *name;
-    uint8_t unactive;
+    uint8_t un_active;
 } Client;
 
 typedef enum message_type {
@@ -37,4 +37,5 @@ typedef enum message_type {
 typedef enum connect_type {
     LOCAL, WEB
 } connect_type;
+
 #endif //ZAD1_CLUSTER_H

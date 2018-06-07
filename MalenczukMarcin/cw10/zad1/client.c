@@ -1,13 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <netinet/in.h>
 #include <libnet.h>
 #include <sys/un.h>
-#include <sys/epoll.h>
 #include "cluster.h"
 
 #define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
@@ -47,14 +45,12 @@ void handle_messages(){
     while(1){
         if(read(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1,"\nError : Could not read message type\n");
         switch(message_type){
-            case REQUEST:{
+            case REQUEST:
                 handle_request();
                 break;
-            }
-            case PING:{
+            case PING:
                 send_name(PONG);
                 break;
-            }
             default:
                 printf("Unknown message type\n");
                 break;
@@ -70,6 +66,7 @@ void handle_request(){
         FAILURE_EXIT(1,"\nError : Could not read request message\n");
 
     result.op_num = operation.op_num;
+    result.value = 0;
     switch(operation.op){
         case '+':
             result.value = operation.arg1 + operation.arg2;

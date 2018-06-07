@@ -1,10 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <sys/socket.h>
 #include <string.h>
-#include <netinet/in.h>
+#include <pthread.h>
 #include <libnet.h>
 #include <sys/un.h>
 #include <sys/epoll.h>
@@ -12,23 +10,37 @@
 
 #define FAILURE_EXIT(code, format, ...) { fprintf(stderr, format, ##__VA_ARGS__); exit(code);}
 
+int in(void *const a, void *const pbase, size_t total_elems, size_t size, __compar_fn_t cmp) {
+    char *base_ptr = (char *) pbase;
+    if (total_elems > 0) {
+        for (int i = 0; i < total_elems; ++i) {
+            if ((*cmp)(a, (void *) (base_ptr + i * size)) == 0) return i;
+        }
+    }
+    return -1;
+}
+
+int cmp_name(char *name, Client *client){
+    return strcmp(name, client->name);
+}
+
 void sigHandler(int);
 
 void __init__(char *, char *);
 
 void __del__();
 
-void register_client(char *, int, uint16_t);
+void register_client(char *, int);
 
 void unregister_client(char *);
 
-void *start_pinger(void *);
+void *ping_routine(void *);
 
 void remove_client(int);
 
 void remove_socket(int);
 
-void *start_commander(void *);
+void *command_routine(void *);
 
 void handle_connection(int);
 
@@ -37,13 +49,12 @@ void handle_message(int);
 int web_socket;
 int local_socket;
 int epoll;
-
 char *unix_path;
 
-pthread_t pinger;
-pthread_t commander;
-pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_t ping;
+pthread_t command;
 
+pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
 Client clients[CLIENT_MAX];
 int cn = 0;
 int op_num = 0;
@@ -89,7 +100,13 @@ void handle_message(int socket) {
         case REGISTER:{
             if(read(socket, client_name, message_size)!= message_size)
                 FAILURE_EXIT(1,"\nError : Could not read register message name\n");
-            register_client(client_name, socket, message_size);
+            register_client(client_name, socket);
+            break;
+        }
+        case UNREGISTER:{
+            if(read(socket, client_name, message_size) != message_size)
+            FAILURE_EXIT(1,"\nError : Could not read unregister message name\n");
+            unregister_client(client_name);
             break;
         }
         case RESULT:{
@@ -98,24 +115,16 @@ void handle_message(int socket) {
                 FAILURE_EXIT(1,"\nError : Could not read result message name\n");
             if(read(socket, &result, sizeof(result_t)) != sizeof(result_t))
                 FAILURE_EXIT(1,"\nError : Could not read result message\n");
-            printf("Client \"%s\" calculated operation [%d]. Result: %d\n", client_name, result.op_num, result.value);
+            printf("Client \"%s\" calculated operation [%d]. Result: %f\n", client_name, result.op_num, result.value);
             break;
         }
         case PONG:{
             if(read(socket, client_name, message_size) != message_size)
                 FAILURE_EXIT(1,"\nError : Could not read PONG message\n");
             pthread_mutex_lock(&clients_mutex);
-            for (int i = 0; i < cn; ++i) {
-                if(strcmp(clients[i].name, client_name) == 0)
-                    clients[i].unactive--;
-            }
+            int i = in(client_name, clients, (size_t) cn, sizeof(Client), (__compar_fn_t) cmp_name);
+            if (i >= 0) clients[i].un_active--;
             pthread_mutex_unlock(&clients_mutex);
-            break;
-        }
-        case UNREGISTER:{
-            if(read(socket, client_name, message_size) != message_size)
-                FAILURE_EXIT(1,"\nError : Could not read unregister message name\n");
-            unregister_client(client_name);
             break;
         }
         default:
@@ -125,7 +134,7 @@ void handle_message(int socket) {
     free(client_name);
 }
 
-void register_client(char *client_name, int socket, uint16_t message_size){
+void register_client(char *client_name, int socket){
     uint8_t message_type;
     pthread_mutex_lock(&clients_mutex);
     if(cn == CLIENT_MAX){
@@ -134,20 +143,16 @@ void register_client(char *client_name, int socket, uint16_t message_size){
             FAILURE_EXIT(1, "\nError : Could not write FAILSIZE message to client \"%s\"\n", client_name);
         remove_socket(socket);
     } else{
-        int exists = 0;
-        for (int i = 0; i < cn; ++i){
-            if(strcmp(clients[i].name, client_name) == 0)
-                exists = 1;
-        }
-        if(exists){
+        int exists = in(client_name, clients, (size_t) cn, sizeof(Client), (__compar_fn_t) cmp_name);
+        if(exists != -1){
             message_type = FAILNAME;
             if (write(socket, &message_type, 1) != 1)
                 FAILURE_EXIT(1, "\nError : Could not write FAILNAME message to client \"%s\"\n", client_name);
             remove_socket(socket);
         } else{
             clients[cn].fd = socket;
-            clients[cn].name = malloc(message_size);
-            clients[cn].unactive = 0;
+            clients[cn].name = malloc(strlen(client_name) + 1);
+            clients[cn].un_active = 0;
             strcpy(clients[cn++].name, client_name);
             message_type = SUCCESS;
             if (write(socket, &message_type, 1) != 1)
@@ -159,27 +164,26 @@ void register_client(char *client_name, int socket, uint16_t message_size){
 
 void unregister_client(char *client_name){
     pthread_mutex_lock(&clients_mutex);
-    for (int i = 0; i < cn; ++i) {
-        if(strcmp(clients[i].name, client_name) == 0){
-            remove_client(i--);
-            printf("Client \"%s\" unregistered\n", client_name);
-        }
+    int i = in(client_name, clients, (size_t) cn, sizeof(Client), (__compar_fn_t) cmp_name);
+    if(i >= 0){
+        remove_client(i);
+        printf("Client \"%s\" unregistered\n", client_name);
     }
     pthread_mutex_unlock(&clients_mutex);
 }
 
-void *start_pinger(void *arg) {
+void *ping_routine(void *arg) {
     uint8_t message_type = PING;
     while (1) {
         pthread_mutex_lock(&clients_mutex);
         for (int i = 0; i < cn; ++i) {
-            if (clients[i].unactive != 0) {
+            if (clients[i].un_active != 0) {
                 printf("Client \"%s\" do not respond. Removing from registered clients\n", clients[i].name);
                 remove_client(i--);
             } else {
                 if (write(clients[i].fd, &message_type, 1) != 1)
                     FAILURE_EXIT(1, "\nError : Could not PING client \"%s\"\n", clients[i].name);
-                clients[i].unactive++;
+                clients[i].un_active++;
             }
         }
         pthread_mutex_unlock(&clients_mutex);
@@ -207,7 +211,7 @@ void remove_socket(int socket){
     if (close(socket) == -1) FAILURE_EXIT(1, "\nError : Could not close client's socket\n");
 }
 
-void *start_commander(void *arg) {
+void *command_routine(void *arg) {
     srand((unsigned int) time(NULL));
     operation_t msg;
     uint8_t message_type = REQUEST;
@@ -216,7 +220,7 @@ void *start_commander(void *arg) {
     while (1) {
         printf("Enter command: \n");
         fgets(buffer, 256, stdin);
-        if (sscanf(buffer, "%d %c %d", &msg.arg1, &msg.op, &msg.arg2) != 3) {
+        if (sscanf(buffer, "%lf %c %lf", &msg.arg1, &msg.op, &msg.arg2) != 3) {
             printf("Wrong command format\n");
             continue;
         }
@@ -235,7 +239,7 @@ void *start_commander(void *arg) {
         if (write(clients[i].fd, &message_type, 1) != 1) error = 1;
         if (write(clients[i].fd, &msg, sizeof(msg)) != sizeof(msg)) error = 1;
         if(error == 0)
-            printf("Command %d: %d %c %d Has been sent to client \"%s\"\n",
+            printf("Command %d: %lf %c %lf Has been sent to client \"%s\"\n",
                     msg.op_num, msg.arg1, msg.op, msg.arg2, clients[i].name);
         else
             printf("\nError : Could not send request to client \"%s\"\n", clients[i].name);
@@ -308,17 +312,17 @@ void __init__(char *arg1, char *arg2) {
         FAILURE_EXIT(1, "\nError : Could not add Local Socket to epoll\n");
 
     // Start Pinger Thread
-    if (pthread_create(&pinger, NULL, start_pinger, NULL) != 0)
+    if (pthread_create(&ping, NULL, ping_routine, NULL) != 0)
         FAILURE_EXIT(1, "\nError : Could not create Pinger Thread");
 
     // Start Commander Thread
-    if (pthread_create(&commander, NULL, start_commander, NULL) != 0)
+    if (pthread_create(&command, NULL, command_routine, NULL) != 0)
         FAILURE_EXIT(1, "\nError : Could not create Commander Thread");
 }
 
 void __del__() {
-    pthread_cancel(pinger);
-    pthread_cancel(commander);
+    pthread_cancel(ping);
+    pthread_cancel(command);
     if (close(web_socket) == -1)
         fprintf(stderr, "\nError : Could not close Web Socket\n");
     if (close(local_socket) == -1)
