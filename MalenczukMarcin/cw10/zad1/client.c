@@ -28,7 +28,7 @@ int SOCKET;
 char *name;
 
 int main(int argc, char **argv) {
-    if (argc != 4) FAILURE_EXIT(1, "\nUsage: %s <Client Name> <WEB / LOCAL> <Port Number / Unix Path>\n", argv[0]);
+    if (argc != 4) FAILURE_EXIT(1, "\nUsage: %s <Client Name> <WEB / LOCAL> <ADDRESS:PORT / Unix Path>\n", argv[0]);
     if (atexit(__del__) == -1) FAILURE_EXIT(1, "\nError : Could not set AtExit\n")
 
     __init__(argv[1], argv[2], argv[3]);
@@ -130,15 +130,23 @@ void __init__(char *arg1, char *arg2, char *arg3) {
     // Init Socket
     switch((strcmp(arg2, "WEB") == 0 ? WEB : strcmp(arg2, "LOCAL") == 0 ? LOCAL : -1)){
         case WEB: {
+            strtok(arg3, ":");
+            char *arg4 = strtok(NULL, ":");
+
+            // Get IP Address
+            uint32_t ip = inet_addr(arg3);
+            printf("%d\n", htonl(ip));
+            if (ip == -1) FAILURE_EXIT(1, "\nError : Wrong IP address\n");
+
             // Get Port Number
-            uint16_t port_num = (uint16_t) atoi(arg3);
+            uint16_t port_num = (uint16_t) atoi(arg4);
             if (port_num < 1024 || port_num > 65535)
-            FAILURE_EXIT(1, "\nError : Wrong Port Number\n");
+                FAILURE_EXIT(1, "\nError : Wrong Port Number\n");
 
             // Init Web Socket
             struct sockaddr_in web_address;
             web_address.sin_family = AF_INET;
-            web_address.sin_addr.s_addr = INADDR_ANY;
+            web_address.sin_addr.s_addr = ip;
             web_address.sin_port = htons(port_num);
 
             if ((SOCKET = socket(AF_INET, SOCK_STREAM, 0)) < 0)
