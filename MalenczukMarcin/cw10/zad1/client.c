@@ -81,7 +81,7 @@ void handle_request(){
             result.value = operation.arg1 * operation.arg2;
             break;
         case '/':
-            result.value = operation.arg1 / operation.arg2;
+            result.value = operation.arg2 != 0 ? operation.arg1 / operation.arg2 : 0;
             break;
         default:
             printf("Unknown operation\n");
