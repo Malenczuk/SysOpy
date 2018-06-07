@@ -18,6 +18,14 @@ void __init__(char *, char *, char *);
 
 void __del__();
 
+void handle_messages();
+
+void handle_request();
+
+void register_on_server();
+
+void send_name(uint8_t);
+
 int SOCKET;
 char *name;
 
@@ -27,8 +35,88 @@ int main(int argc, char **argv) {
 
     __init__(argv[1], argv[2], argv[3]);
 
+    register_on_server();
+
+    handle_messages();
 
     return 0;
+}
+
+void handle_messages(){
+    uint8_t message_type;
+    while(1){
+        if(read(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1,"\nError : Could not read message type\n");
+        switch(message_type){
+            case REQUEST:{
+                handle_request();
+                break;
+            }
+            case PING:{
+                send_name(PONG);
+                break;
+            }
+            default:
+                printf("Unknown message type\n");
+                break;
+        }
+    }
+}
+
+void handle_request(){
+    operation_t operation;
+    result_t result;
+
+    if(read(SOCKET, &operation, sizeof(operation_t)) != sizeof(operation_t))
+        FAILURE_EXIT(1,"\nError : Could not read request message\n");
+
+    result.op_num = operation.op_num;
+    switch(operation.op){
+        case '+':
+            result.value = operation.arg1 + operation.arg2;
+            break;
+        case '-':
+            result.value = operation.arg1 - operation.arg2;
+            break;
+        case '*':
+            result.value = operation.arg1 * operation.arg2;
+            break;
+        case '/':
+            result.value = operation.arg1 / operation.arg2;
+            break;
+        default:
+            printf("Unknown operation\n");
+            break;
+    }
+    send_name(RESULT);
+    if(write(SOCKET, &result, sizeof(result_t)) != sizeof(result_t))
+        FAILURE_EXIT(1, "\nError : Could not write result message\n");
+}
+
+void register_on_server(){
+    send_name(REGISTER);
+
+    uint8_t message_type;
+    if(read(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1, "\nError : Could not read response message type\n");
+
+    switch(message_type){
+        case FAILNAME:
+            FAILURE_EXIT(2, "Name already in use\n");
+        case FAILSIZE:
+            FAILURE_EXIT(2, "Too many clients logged to the server\n");
+        case SUCCESS:
+            printf("Logged with SUCCESS\n");
+            break;
+        default:
+            FAILURE_EXIT(1, "\nError : Unpredicted REGISTER behavior\n")
+    }
+}
+
+void send_name(uint8_t message_type){
+    uint16_t message_size = (uint16_t) (strlen(name) + 1);
+    if(write(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1, "\nError : Could not write message type\n");
+    if(write(SOCKET, &message_size, 2) != 2) FAILURE_EXIT(1, "\nError : Could not write message size\n");
+    if(write(SOCKET, name, message_size) != message_size)
+        FAILURE_EXIT(1, "\nError : Could not write name message\n");
 }
 
 void sigHandler(int signo){
@@ -90,6 +178,7 @@ void __init__(char *arg1, char *arg2, char *arg3) {
 }
 
 void __del__() {
+    send_name(UNREGISTER);
     if (shutdown(SOCKET, SHUT_RDWR) == -1)
         fprintf(stderr, "\nError : Could not shutdown Socket\n");
     if (close(SOCKET) == -1)
