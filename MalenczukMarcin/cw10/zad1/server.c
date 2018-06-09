@@ -171,7 +171,7 @@ void handle_message(int socket) {
                 FAILURE_EXIT(1,"\nError : Could not read result message name\n");
             if(read(socket, &result, sizeof(result_t)) != sizeof(result_t))
                 FAILURE_EXIT(1,"\nError : Could not read result message\n");
-            printf("Client \"%s\" calculated operation [%d]. Result: %f\n", client_name, result.op_num, result.value);
+            printf("Client \"%s\" calculated operation [%d]. Result: %lf\n", client_name, result.op_num, result.value);
             break;
         }
         case PONG:{
@@ -269,7 +269,7 @@ void __init__(char *arg1, char *arg2) {
     // Init Web Socket
     struct sockaddr_in web_address;
     web_address.sin_family = AF_INET;
-    web_address.sin_addr.s_addr = INADDR_ANY;
+    web_address.sin_addr.s_addr = htonl(INADDR_ANY);
     web_address.sin_port = htons(port_num);
 
     if ((web_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)

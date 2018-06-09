@@ -61,29 +61,21 @@ void handle_messages(){
 void handle_request(){
     operation_t operation;
     result_t result;
+    char buffer[256];
 
     if(read(SOCKET, &operation, sizeof(operation_t)) != sizeof(operation_t))
         FAILURE_EXIT(1,"\nError : Could not read request message\n");
 
     result.op_num = operation.op_num;
     result.value = 0;
-    switch(operation.op){
-        case '+':
-            result.value = operation.arg1 + operation.arg2;
-            break;
-        case '-':
-            result.value = operation.arg1 - operation.arg2;
-            break;
-        case '*':
-            result.value = operation.arg1 * operation.arg2;
-            break;
-        case '/':
-            result.value = operation.arg2 != 0 ? operation.arg1 / operation.arg2 : 0;
-            break;
-        default:
-            printf("Unknown operation\n");
-            break;
-    }
+
+    sprintf(buffer, "echo 'scale=6; %lf %c %lf' | bc", operation.arg1, operation.op, operation.arg2);
+    FILE* calc = popen(buffer, "r");
+    size_t n = fread(buffer, 1, 256, calc);
+    pclose(calc);
+    buffer[n-1] = '\0';
+    sscanf(buffer, "%lf", &result.value);
+
     send_named_message(RESULT);
     if(write(SOCKET, &result, sizeof(result_t)) != sizeof(result_t))
         FAILURE_EXIT(1, "\nError : Could not write result message\n");
@@ -132,10 +124,10 @@ void __init__(char *arg1, char *arg2, char *arg3) {
         case WEB: {
             strtok(arg3, ":");
             char *arg4 = strtok(NULL, ":");
+            if(arg4 == NULL) FAILURE_EXIT(1, "\nError : Wrong IP address with port format\n")
 
             // Get IP Address
             uint32_t ip = inet_addr(arg3);
-            printf("%d\n", htonl(ip));
             if (ip == -1) FAILURE_EXIT(1, "\nError : Wrong IP address\n");
 
             // Get Port Number
