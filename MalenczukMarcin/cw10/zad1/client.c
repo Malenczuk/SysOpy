@@ -22,7 +22,7 @@ void handle_request();
 
 void register_on_server();
 
-void send_named_message(uint8_t);
+void send_message(uint8_t);
 
 int SOCKET;
 char *name;
@@ -49,7 +49,7 @@ void handle_messages(){
                 handle_request();
                 break;
             case PING:
-                send_named_message(PONG);
+                send_message(PONG);
                 break;
             default:
                 printf("Unknown message type\n");
@@ -76,13 +76,13 @@ void handle_request(){
     buffer[n-1] = '\0';
     sscanf(buffer, "%lf", &result.value);
 
-    send_named_message(RESULT);
+    send_message(RESULT);
     if(write(SOCKET, &result, sizeof(result_t)) != sizeof(result_t))
         FAILURE_EXIT(1, "\nError : Could not write result message\n");
 }
 
 void register_on_server(){
-    send_named_message(REGISTER);
+    send_message(REGISTER);
 
     uint8_t message_type;
     if(read(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1, "\nError : Could not read response message type\n");
@@ -100,7 +100,7 @@ void register_on_server(){
     }
 }
 
-void send_named_message(uint8_t message_type){
+void send_message(uint8_t message_type){
     uint16_t message_size = (uint16_t) (strlen(name) + 1);
     if(write(SOCKET, &message_type, 1) != 1) FAILURE_EXIT(1, "\nError : Could not write message type\n");
     if(write(SOCKET, &message_size, 2) != 2) FAILURE_EXIT(1, "\nError : Could not write message size\n");
@@ -175,7 +175,7 @@ void __init__(char *arg1, char *arg2, char *arg3) {
 }
 
 void __del__() {
-    send_named_message(UNREGISTER);
+    send_message(UNREGISTER);
     if (shutdown(SOCKET, SHUT_RDWR) == -1)
         fprintf(stderr, "\nError : Could not shutdown Socket\n");
     if (close(SOCKET) == -1)
