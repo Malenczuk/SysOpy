@@ -143,6 +143,7 @@ void __init__(char *arg1, char *arg2, char *arg3) {
                 FAILURE_EXIT(1, "\nError : Could not create web socket\n");
 
             struct sockaddr_in web_address;
+            memset(&web_address, 0, sizeof(struct sockaddr_in));
 
             web_address.sin_family = AF_INET;
             web_address.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -151,7 +152,7 @@ void __init__(char *arg1, char *arg2, char *arg3) {
                 FAILURE_EXIT(1, "\nError : Could not bind to web socket\n");
 
             web_address.sin_family = AF_INET;
-            web_address.sin_addr.s_addr = ip;
+            web_address.sin_addr.s_addr = htonl(ip);
             web_address.sin_port = htons(port_num);
             if (connect(SOCKET, (const struct sockaddr *) &web_address, sizeof(web_address)) == -1)
                 FAILURE_EXIT(1, "\nError : Could not connect to web socket\n");

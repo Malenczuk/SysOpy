@@ -268,6 +268,7 @@ void __init__(char *arg1, char *arg2) {
 
     // Init Web Socket
     struct sockaddr_in web_address;
+    memset(&web_address, 0, sizeof(struct sockaddr_in));
     web_address.sin_family = AF_INET;
     web_address.sin_addr.s_addr = htonl(INADDR_ANY);
     web_address.sin_port = htons(port_num);
